@@ -4,7 +4,7 @@ import { ArrowUpRight, ChevronRight, Sparkles } from 'lucide-react';
 interface ProjectCardItem {
   id: number;
   isHeroOverview?: boolean;
-  tag: string;
+  category: string;
   badge: string;
   quote?: string;
   heroText?: string;
@@ -12,79 +12,74 @@ interface ProjectCardItem {
   subtitle: string;
   description: string;
   imageUrl?: string;
-  accentGradient: string;
+  darkCard?: boolean;
 }
 
 const PROJECT_CARDS: ProjectCardItem[] = [
   {
     id: 1,
     isHeroOverview: true,
-    tag: 'CLYPTUS PORTFOLIO',
-    badge: '2026 FEATURE MATRIX',
+    category: 'CLYPTUS PORTFOLIO',
+    badge: 'SELECTED WORK',
     title: 'Selected work & explorations',
     subtitle: 'ENGINEERED FOR ENTERPRISE SPEED',
     description: 'Transforming legacy operations into high-velocity, autonomous AI workflows and resilient multi-cloud architectures.',
-    accentGradient: 'from-sky-600 via-indigo-600 to-purple-600',
   },
   {
     id: 2,
-    tag: 'AI DIGITAL WORKERS',
+    category: 'AI DIGITAL WORKERS',
     badge: 'FEATURE #01',
     quote: 'BOOST YOUR WORKFORCE WITH AI DIGITAL WORKERS',
     heroText: "Hi, I'm Alex.",
     title: 'MyWorker AI',
     subtitle: 'Autonomous Workforce Scaling',
-    description: 'AI platform simplifying hiring, management, and autonomous workforce scaling with sub-second task execution.',
+    description: 'AI platform simplifying hiring, management, and workforce scaling.',
     imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop',
-    accentGradient: 'from-sky-500 to-blue-600',
   },
   {
     id: 3,
-    tag: 'AUTOMATED PIPELINES',
+    category: 'AUDIO & MEDIA AI',
     badge: 'FEATURE #02',
-    quote: 'HIGH-VELOCITY MULTI-AGENT ORCHESTRATION',
-    heroText: 'Clyptus Helix.',
-    title: 'Autonomous Workflow Engine',
-    subtitle: 'Sub-Second Pipeline Execution',
-    description: 'Self-healing multi-agent event loops that automatically handle complex enterprise transactions and data routing.',
-    imageUrl: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=1200&auto=format&fit=crop',
-    accentGradient: 'from-indigo-500 to-purple-600',
+    quote: 'Pulse Studio®',
+    heroText: 'An Independent Music 🎵 Studio Shaped by Sound 🪩, Built to Move Culture.',
+    title: 'Pulse Studio',
+    subtitle: 'Motion-Led Sound Architecture',
+    description: 'A motion-led studio website showcasing artists, projects, and sound culture.',
+    imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop',
+    darkCard: true,
   },
   {
     id: 4,
-    tag: 'MULTI-CLOUD HYBRID',
+    category: 'ARCHITECTURE & SPATIAL',
     badge: 'FEATURE #03',
-    quote: 'HIGH-AVAILABILITY ORACLE & CLUSTER INFRASTRUCTURE',
-    heroText: 'Oracle Scale.',
-    title: 'Oracle & Cloud Optimization',
-    subtitle: '3.2x Database Throughput',
-    description: 'Database query acceleration and distributed hybrid cloud architecture engineered for zero downtime.',
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop',
-    accentGradient: 'from-emerald-500 to-teal-600',
+    quote: 'LIVE LIFE IN LUXURY.',
+    heroText: 'Live Life in Luxury.',
+    title: 'LoftLoom Architecture',
+    subtitle: 'Bespoke Spatial Design',
+    description: 'High-end architectural design studio creating bespoke residential spaces.',
+    imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop',
   },
   {
     id: 5,
-    tag: 'ZERO-TRUST SECURITY',
+    category: 'MULTI-CLOUD HYBRID',
     badge: 'FEATURE #04',
-    quote: 'MILITARY-GRADE COMPLIANCE & THREAT DETECTION',
-    heroText: 'Shield AI.',
-    title: 'Zero-Trust Governance',
-    subtitle: 'ISO 27001 Certified Security',
-    description: 'Continuous AI security auditing, automated policy enforcement, and encrypted data vault governance.',
-    imageUrl: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1200&auto=format&fit=crop',
-    accentGradient: 'from-amber-500 to-orange-600',
+    quote: 'HIGH-AVAILABILITY CLUSTER INFRASTRUCTURE',
+    heroText: '3.2x Throughput.',
+    title: 'Oracle Cloud Optimizer',
+    subtitle: 'Database Query Acceleration',
+    description: 'Enterprise database acceleration engine with zero downtime replication.',
+    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop',
   },
   {
     id: 6,
-    tag: 'REAL-TIME ANALYTICS',
+    category: 'ZERO-TRUST SECURITY',
     badge: 'FEATURE #05',
-    quote: 'STREAM PROCESSING & EXECUTIVE DATA TELEMETRY',
-    heroText: 'Telemetry AI.',
-    title: 'Stream Data Intelligence',
-    subtitle: '50ms Real-Time Metrics',
-    description: 'Instant transformation of raw operational sensor streams into actionable executive intelligence dashboards.',
-    imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop',
-    accentGradient: 'from-purple-500 to-pink-600',
+    quote: 'MILITARY-GRADE COMPLIANCE & GOVERNANCE',
+    heroText: 'ISO 27001 Ready.',
+    title: 'Shield AI Governance',
+    subtitle: 'Continuous Threat Auditing',
+    description: 'Military-grade encryption and automated policy auditing for enterprise clusters.',
+    imageUrl: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1200&auto=format&fit=crop',
   },
 ];
 
@@ -93,7 +88,7 @@ export const RisingSlideCardsSection: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
 
-  // High-performance RAF scroll progress calculation over 500vh pinned track
+  // RAF sampling of scroll track progress over 500vh pinned track
   useEffect(() => {
     let ticking = false;
 
@@ -110,9 +105,8 @@ export const RisingSlideCardsSection: React.FC = () => {
               const p = Math.max(0, Math.min(1, scrolled / totalDist));
               setScrollProgress(p);
 
-              // Calculate active focused card
-              const slideProgress = Math.max(0, (p - 0.20) / 0.80);
-              const idx = Math.min(PROJECT_CARDS.length - 1, Math.floor(slideProgress * (PROJECT_CARDS.length - 1)));
+              // Update active focal index
+              const idx = Math.min(PROJECT_CARDS.length - 1, Math.floor(p * (PROJECT_CARDS.length - 1)));
               setActiveCardIndex(idx);
             }
           }
@@ -127,38 +121,31 @@ export const RisingSlideCardsSection: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Motion Math:
-  // Stage 1 (0.00 -> 0.25): Screen Frozen. Cards 3..6 rise UP from bottom-right offscreen corner into position.
-  // Stage 2 (0.25 -> 0.95): Screen Frozen. Entire row slides LEFT seamlessly with NO GAP between cards (gap-0).
-  // Stage 3 (0.95 -> 1.00): Scroll release transition to footer.
-
-  const riseProgress = Math.min(1, scrollProgress / 0.25);
-  const slideProgress = Math.max(0, Math.min(1, (scrollProgress - 0.25) / 0.70));
-
-  // Horizontal slide distance: total cards - 2 visible cards at 50vw width each
-  const totalSlidePercent = slideProgress * (PROJECT_CARDS.length - 2) * 50;
+  // Total horizontal scroll distance calculation:
+  // Card 1 (Left header panel): 420px
+  // Card 2..6: 620px each + 32px gap
+  // Pinned viewport track locks screen while cards slide left
+  const maxSlidePx = 4 * 652; // distance to slide 4 cards left
+  const currentSlidePx = scrollProgress * maxSlidePx;
 
   return (
-    /* Outer Pinned Scroll Track (500vh locks/freezes the viewport completely) */
-    <div ref={trackRef} className="relative w-full h-[500vh] bg-[#f2f2ef] select-none">
+    /* Outer Pinned Scroll Track (500vh locks the viewport completely) */
+    <div ref={trackRef} className="relative w-full h-[500vh] bg-[#eef0f2] select-none">
       {/* Sticky Viewport Stage (100vh Full Screen Frozen Container) */}
-      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-between">
+      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-between py-6 px-4 sm:px-10">
         
-        {/* Top Minimal Navigation Bar */}
-        <div className="relative z-20 w-full px-6 sm:px-12 py-5 flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-slate-200/80">
-          <div className="flex items-center gap-3">
+        {/* Minimal Header Controls Bar */}
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-20 pb-4">
+          <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
             <span className="font-mono text-xs font-bold text-slate-800 tracking-wider uppercase">
-              CLYPTUS ENTERPRISE SHOWCASE
+              CLYPTUS WORK & EXPLORATIONS
             </span>
           </div>
 
-          {/* Slide Progress Indicator */}
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 font-mono text-xs text-slate-500">
-              <span className="font-bold text-slate-900">0{activeCardIndex + 1}</span> / 0{PROJECT_CARDS.length}
-            </div>
-            <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+          <div className="flex items-center gap-3 bg-white/80 border border-slate-300/80 px-4 py-1.5 rounded-full backdrop-blur-md shadow-2xs font-mono text-xs text-slate-600">
+            <span className="font-bold text-slate-900">0{activeCardIndex + 1}</span> / 0{PROJECT_CARDS.length}
+            <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden ml-1">
               <div 
                 className="h-full bg-slate-900 transition-all duration-150"
                 style={{ width: `${Math.round(scrollProgress * 100)}%` }}
@@ -167,122 +154,133 @@ export const RisingSlideCardsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 2-Card Full-Screen Split Viewport (Side-by-Side NO GAP Layout) */}
-        <div className="relative w-full flex-1 overflow-hidden flex items-center">
-          
-          {/* Continuous Row Container - NO GAP (space-x-0 / gap-0) */}
+        {/* Viewport Card Rail Container */}
+        <div className="relative w-full flex-1 flex items-center overflow-hidden z-10">
           <div 
-            className="flex w-full h-full transition-transform duration-75 ease-out"
+            className="flex gap-8 items-center transition-transform duration-75 ease-out"
             style={{
-              transform: `translate3d(-${totalSlidePercent}vw, 0, 0)`,
+              transform: `translate3d(-${currentSlidePx}px, 0, 0)`,
               willChange: 'transform',
             }}
           >
             {PROJECT_CARDS.map((card, idx) => {
-              // Cards 3+ rise up from bottom-right during Stage 1
-              let transformY = 0;
-              let riseOpacity = 1.0;
+              // Calculate dynamic rise-up offset from bottom-right as card comes into view!
+              // Card 1 & Card 2 start already in alignment on initial screen load (0% scroll)
+              // Card 3+ starts offset down (+180px) and rises UP as scroll brings it near focal right view!
+
+              let cardRiseY = 0;
+              let cardScale = 1.0;
+              let cardOpacity = 1.0;
 
               if (idx >= 2) {
-                const stagger = (idx - 2) * 0.15;
-                const cardRise = Math.max(0, Math.min(1, (riseProgress - stagger) / (1 - stagger)));
-                transformY = (1 - cardRise) * 350; // Rise UP from +350px
-                riseOpacity = Math.min(1, cardRise * 2.0);
+                // Card 3+ rise progress calculation based on scroll progress
+                const cardEntryStart = (idx - 2) * 0.22;
+                const cardEntryEnd = cardEntryStart + 0.22;
+
+                if (scrollProgress < cardEntryStart) {
+                  // Not yet entered: peeked at bottom-right corner
+                  cardRiseY = 180;
+                  cardScale = 0.92;
+                  cardOpacity = 0.55;
+                } else if (scrollProgress >= cardEntryStart && scrollProgress <= cardEntryEnd) {
+                  // Rising UP phase: transition Y 180px -> 0px
+                  const riseRatio = (scrollProgress - cardEntryStart) / 0.22;
+                  cardRiseY = (1 - riseRatio) * 180;
+                  cardScale = 0.92 + 0.08 * riseRatio;
+                  cardOpacity = 0.55 + 0.45 * riseRatio;
+                } else {
+                  // Fully risen and aligned
+                  cardRiseY = 0;
+                  cardScale = 1.0;
+                  cardOpacity = 1.0;
+                }
               }
 
               return (
                 <div
                   key={card.id}
                   style={{
-                    transform: `translate3d(0, ${transformY}px, 0)`,
-                    opacity: riseOpacity,
+                    transform: `translate3d(0, ${cardRiseY}px, 0) scale(${cardScale})`,
+                    opacity: cardOpacity,
                     willChange: 'transform, opacity',
                   }}
-                  className="shrink-0 w-[100vw] md:w-[50vw] h-full border-r border-slate-300/80 bg-white relative flex flex-col justify-between overflow-hidden group"
+                  className="shrink-0 transition-transform duration-100 ease-out"
                 >
                   {card.isHeroOverview ? (
-                    /* CARD 1: Left Hero Overview Panel (Matches Reference Image Left Half) */
-                    <div className="w-full h-full p-8 sm:p-14 lg:p-20 flex flex-col justify-between bg-[#f4f3ee] text-slate-900 relative">
-                      {/* Subtle Grid Accent */}
-                      <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
-
-                      <div className="relative z-10">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-300 text-[11px] font-mono font-bold text-slate-700 uppercase tracking-widest mb-8 shadow-2xs">
-                          <Sparkles className="w-3 h-3 text-sky-600" />
+                    /* CARD 1: Left Overview Title Card (Matches Reference Image Left Side) */
+                    <div className="w-[320px] sm:w-[400px] h-[520px] sm:h-[580px] flex flex-col justify-between p-8 sm:p-12 text-slate-900 bg-[#eef0f2] rounded-3xl border border-transparent">
+                      <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-300 text-[11px] font-mono font-bold text-slate-700 uppercase tracking-widest mb-10 shadow-2xs">
+                          <Sparkles className="w-3.5 h-3.5 text-sky-600" />
                           {card.badge}
                         </div>
 
-                        <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 uppercase leading-[1.02] max-w-xl">
+                        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-slate-900 font-sans leading-[1.08] mb-6">
                           Selected work <br />
-                          <span className="text-slate-600">& explorations</span>
+                          <span className="text-slate-500 font-normal">& explorations</span>
                         </h2>
                       </div>
 
-                      <div className="relative z-10 pt-8 border-t border-slate-300/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                        <p className="text-sm sm:text-base text-slate-600 font-medium max-w-md leading-relaxed">
+                      <div className="pt-6 border-t border-slate-300/80 flex flex-col gap-4">
+                        <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
                           {card.description}
                         </p>
 
-                        <button className="inline-flex items-center gap-2 text-xs font-mono font-bold text-slate-900 hover:text-sky-600 uppercase tracking-widest pb-1 border-b-2 border-slate-900 hover:border-sky-600 transition-all shrink-0">
+                        <button className="inline-flex items-center gap-2 text-xs font-mono font-bold text-slate-900 hover:text-sky-600 uppercase tracking-widest pb-1 border-b border-slate-900 hover:border-sky-600 transition-all self-start">
                           VIEW ALL PROJECTS
                           <ChevronRight className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
                   ) : (
-                    /* CARDS 2..6: Full-Screen Visual Feature Card (Matches Reference Image Right Half) */
-                    <div className="w-full h-full flex flex-col justify-between p-6 sm:p-10 relative bg-slate-950 text-white overflow-hidden">
-                      {/* Background Visual Image with Dark Gradient Overlay */}
-                      {card.imageUrl && (
-                        <div className="absolute inset-0 z-0 overflow-hidden">
+                    /* CARDS 2..6: Project Feature Card (Matches Reference Image Cards 2 & 3) */
+                    <div className="w-[320px] sm:w-[540px] lg:w-[620px] h-[520px] sm:h-[580px] bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col justify-between group">
+                      
+                      {/* Inner Image Container with Text Overlay */}
+                      <div className={`relative w-full h-[340px] sm:h-[390px] rounded-2xl overflow-hidden ${card.darkCard ? 'bg-slate-950' : 'bg-slate-900'}`}>
+                        {card.imageUrl && (
                           <img 
                             src={card.imageUrl} 
-                            alt={card.title} 
-                            className="w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-1000 ease-out"
+                            alt={card.title}
+                            className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-700 ease-out"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/20" />
-                        </div>
-                      )}
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
 
-                      {/* Card Top Row: Badge + Quote */}
-                      <div className="relative z-10 flex items-start justify-between gap-4">
-                        <div className="flex flex-col gap-1 max-w-xs">
-                          <span className="text-[10px] font-mono tracking-widest text-slate-300 font-bold uppercase drop-shadow-sm">
-                            {card.tag}
-                          </span>
-                          {card.quote && (
-                            <p className="text-xs sm:text-sm font-mono font-semibold text-white/90 uppercase tracking-tight leading-snug drop-shadow-sm max-w-[240px]">
-                              "{card.quote}"
-                            </p>
-                          )}
-                        </div>
+                        {/* Top Quote Tagline */}
+                        {card.quote && (
+                          <div className="absolute top-5 left-5 right-5 z-10 flex items-start justify-between">
+                            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-white/90 uppercase max-w-[260px] drop-shadow-sm leading-snug">
+                              {card.quote}
+                            </span>
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/20 backdrop-blur-md text-white border border-white/30 shrink-0">
+                              {card.badge}
+                            </span>
+                          </div>
+                        )}
 
-                        <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-white/20 backdrop-blur-md text-white border border-white/30 shadow-sm shrink-0">
-                          {card.badge}
-                        </span>
+                        {/* Center Hero Overlay Text (e.g. "Hi, I'm Alex." or "Pulse Studio") */}
+                        {card.heroText && (
+                          <div className="absolute bottom-6 left-6 right-6 z-10">
+                            <h3 className="text-3xl sm:text-5xl font-medium text-white tracking-tight leading-tight drop-shadow-md font-sans">
+                              {card.heroText}
+                            </h3>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Card Center: Hero Typography (Matching "Hi, I'm Alex." reference text style) */}
-                      {card.heroText && (
-                        <div className="relative z-10 my-auto py-6">
-                          <h3 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-none drop-shadow-md">
-                            {card.heroText}
-                          </h3>
-                        </div>
-                      )}
-
-                      {/* Card Bottom Row: Title, Subtitle, Description & Link */}
-                      <div className="relative z-10 pt-6 border-t border-white/20 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
-                        <div className="flex flex-col gap-1">
-                          <h4 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
+                      {/* Card Details Footer Row (Below Image) */}
+                      <div className="pt-4 flex items-end justify-between gap-4">
+                        <div className="flex flex-col gap-1 max-w-md">
+                          <h4 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight font-sans">
                             {card.title}
                           </h4>
-                          <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-sm leading-relaxed line-clamp-2">
+                          <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed line-clamp-1">
                             {card.description}
                           </p>
                         </div>
 
-                        <button className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-white hover:text-sky-400 uppercase tracking-widest pb-1 border-b border-white/60 hover:border-sky-400 transition-all shrink-0">
+                        <button className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-slate-800 hover:text-sky-600 uppercase tracking-widest pb-0.5 border-b border-slate-400 hover:border-sky-600 transition-all shrink-0">
                           EXPLORE PROJECT
                           <ArrowUpRight className="w-4 h-4" />
                         </button>
