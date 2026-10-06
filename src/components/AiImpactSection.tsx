@@ -174,7 +174,7 @@ export const AiImpactSection: React.FC = () => {
       : 0.0;
   const stage1Blur = progress > 0.32 ? (progress - 0.32) * 12 : 0;
 
-  // Stage 2: "NO DEMOS. NO DECKS. BUILT FOR REAL WORK." (progress 0.54 -> 1.0)
+  // Stage 2: "NO DEMOS. NO DECKS. ADAPTIVE DESIGN AND CONTENT STRATEGY." (progress 0.54 -> 1.0)
   const stage2Opacity = progress < 0.54 
     ? 0.0 
     : progress < 0.70 
@@ -254,7 +254,7 @@ export const AiImpactSection: React.FC = () => {
           </div>
         )}
 
-        {/* STAGE 2: Second Hero Typography ("NO DEMOS. NO DECKS. BUILT FOR REAL WORK.") */}
+        {/* STAGE 2: Second Hero Typography ("NO DEMOS. NO DECKS. ADAPTIVE DESIGN AND CONTENT STRATEGY.") */}
         {stage2Opacity > 0 && (
           <div
             className="absolute z-10 flex flex-col items-center justify-center text-center px-4 w-full max-w-5xl transition-transform duration-75 ease-out"
@@ -270,16 +270,16 @@ export const AiImpactSection: React.FC = () => {
             </div>
 
             {/* Main Headline with Giggle Effect */}
-            <div className="flex flex-col items-center justify-center leading-[0.9] tracking-tight uppercase font-black text-slate-950 text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7rem]">
-              {/* Line 1: BUILT FOR */}
+            <div className="flex flex-col items-center justify-center leading-[0.9] tracking-tight uppercase font-black text-slate-950 text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem]">
+              {/* Line 1: ADAPTIVE DESIGN */}
               <div className="text-slate-950 font-black">
-                <GiggleText text="BUILT FOR" baseDelay={0.2} />
+                <GiggleText text="ADAPTIVE DESIGN" baseDelay={0.2} />
               </div>
 
-              {/* Line 2: REAL WORK. */}
+              {/* Line 2: AND CONTENT STRATEGY. */}
               <div className="font-black my-1">
-                <GiggleText text="REAL " baseDelay={0.6} className="text-slate-950" />
-                <GiggleText text="WORK." baseDelay={1.0} className="text-[#2563eb]" />
+                <GiggleText text="AND CONTENT " baseDelay={0.6} className="text-slate-950" />
+                <GiggleText text="STRATEGY." baseDelay={1.0} className="text-[#2563eb]" />
               </div>
             </div>
           </div>
