@@ -88,7 +88,7 @@ export const RisingSlideCardsSection: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
 
-  // RAF sampling of scroll track progress over 500vh pinned track
+  // RAF sampling of scroll progress over 500vh pinned track
   useEffect(() => {
     let ticking = false;
 
@@ -105,7 +105,7 @@ export const RisingSlideCardsSection: React.FC = () => {
               const p = Math.max(0, Math.min(1, scrolled / totalDist));
               setScrollProgress(p);
 
-              // Update active focal index
+              // Focused card index
               const idx = Math.min(PROJECT_CARDS.length - 1, Math.floor(p * (PROJECT_CARDS.length - 1)));
               setActiveCardIndex(idx);
             }
@@ -121,12 +121,16 @@ export const RisingSlideCardsSection: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Total horizontal scroll distance calculation:
-  // Card 1 (Left header panel): 420px
-  // Card 2..6: 620px each + 32px gap
-  // Pinned viewport track locks screen while cards slide left
-  const maxSlidePx = 4 * 652; // distance to slide 4 cards left
-  const currentSlidePx = scrollProgress * maxSlidePx;
+  // Motion Math:
+  // Initial state (0% scroll): ONLY 2 CARDS visible (Card 1 on left half 50vw, Card 2 on right half 50vw).
+  // All remaining cards (Card 3, 4, 5, 6) start COMPLETELY OFFSCREEN at bottom right (opacity: 0, translateY: +500px).
+  //
+  // Phase 1 (0.00 -> 0.20): Card 3 rises UP from bottom right offscreen into alignment alongside Card 2.
+  // Phase 2 (0.20 -> 0.90): Row slides LEFT so Card 3 moves to main focus, then Card 4 rises UP & slides left, etc.
+
+  const slideProgress = Math.max(0, (scrollProgress - 0.20) / 0.75);
+  // Total slide amount in vw (50vw per card shift)
+  const slideVW = slideProgress * (PROJECT_CARDS.length - 2) * 50;
 
   return (
     /* Outer Pinned Scroll Track (500vh locks the viewport completely) */
@@ -134,8 +138,8 @@ export const RisingSlideCardsSection: React.FC = () => {
       {/* Sticky Viewport Stage (100vh Full Screen Frozen Container) */}
       <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-between py-6 px-4 sm:px-10">
         
-        {/* Minimal Header Controls Bar */}
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-20 pb-4">
+        {/* Minimal Top Controls Bar */}
+        <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-20 pb-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
             <span className="font-mono text-xs font-bold text-slate-800 tracking-wider uppercase">
@@ -154,44 +158,39 @@ export const RisingSlideCardsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Viewport Card Rail Container */}
+        {/* 2-Card Full-Screen Viewport Rail (50vw Left + 50vw Right initially) */}
         <div className="relative w-full flex-1 flex items-center overflow-hidden z-10">
           <div 
-            className="flex gap-8 items-center transition-transform duration-75 ease-out"
+            className="flex w-full h-full items-center transition-transform duration-75 ease-out"
             style={{
-              transform: `translate3d(-${currentSlidePx}px, 0, 0)`,
+              transform: `translate3d(-${slideVW}vw, 0, 0)`,
               willChange: 'transform',
             }}
           >
             {PROJECT_CARDS.map((card, idx) => {
-              // Calculate dynamic rise-up offset from bottom-right as card comes into view!
-              // Card 1 & Card 2 start already in alignment on initial screen load (0% scroll)
-              // Card 3+ starts offset down (+180px) and rises UP as scroll brings it near focal right view!
-
+              // Rise UP motion calculation for Card 3+
+              // Initially (at 0% scroll), Card 1 and Card 2 are 100% visible (translateY: 0, opacity: 1).
+              // Card 3+ starts COMPLETELY OFFSCREEN at bottom right (opacity: 0, translateY: +500px).
               let cardRiseY = 0;
-              let cardScale = 1.0;
               let cardOpacity = 1.0;
 
               if (idx >= 2) {
-                // Card 3+ rise progress calculation based on scroll progress
-                const cardEntryStart = (idx - 2) * 0.20;
-                const cardEntryEnd = cardEntryStart + 0.20;
+                // Card entry window mapped to scrollProgress
+                const cardEntryStart = (idx - 2) * 0.18;
+                const cardEntryEnd = cardEntryStart + 0.18;
 
-                if (scrollProgress < cardEntryStart) {
-                  // Initially hidden offscreen: strictly ONLY 2 cards visible on initial load!
-                  cardRiseY = 300;
-                  cardScale = 0.85;
-                  cardOpacity = 0.0;
-                } else if (scrollProgress >= cardEntryStart && scrollProgress <= cardEntryEnd) {
-                  // Rising UP from bottom-right phase: transition Y 300px -> 0px, opacity 0.0 -> 1.0
-                  const riseRatio = (scrollProgress - cardEntryStart) / 0.20;
-                  cardRiseY = (1 - riseRatio) * 300;
-                  cardScale = 0.85 + 0.15 * riseRatio;
-                  cardOpacity = Math.min(1.0, riseRatio * 1.5);
+                if (scrollProgress <= cardEntryStart) {
+                  // Completely hidden offscreen at bottom right
+                  cardRiseY = 500;
+                  cardOpacity = 0;
+                } else if (scrollProgress > cardEntryStart && scrollProgress <= cardEntryEnd) {
+                  // Rises UP into alignment
+                  const ratio = (scrollProgress - cardEntryStart) / 0.18;
+                  cardRiseY = (1 - ratio) * 500;
+                  cardOpacity = Math.min(1, ratio * 1.5);
                 } else {
-                  // Fully risen and aligned
+                  // Fully risen into position
                   cardRiseY = 0;
-                  cardScale = 1.0;
                   cardOpacity = 1.0;
                 }
               }
@@ -200,17 +199,17 @@ export const RisingSlideCardsSection: React.FC = () => {
                 <div
                   key={card.id}
                   style={{
-                    transform: `translate3d(0, ${cardRiseY}px, 0) scale(${cardScale})`,
+                    transform: `translate3d(0, ${cardRiseY}px, 0)`,
                     opacity: cardOpacity,
                     willChange: 'transform, opacity',
                   }}
-                  className="shrink-0 transition-transform duration-100 ease-out"
+                  className="shrink-0 w-[100vw] md:w-[50vw] h-[85vh] p-3 sm:p-5 flex flex-col justify-center transition-transform duration-100 ease-out"
                 >
                   {card.isHeroOverview ? (
-                    /* CARD 1: Left Overview Title Card (Matches Reference Image Left Side) */
-                    <div className="w-[320px] sm:w-[400px] h-[520px] sm:h-[580px] flex flex-col justify-between p-8 sm:p-12 text-slate-900 bg-[#eef0f2] rounded-3xl border border-transparent">
+                    /* CARD 1: Left Overview Title Card (Exactly Left 50% in initial image view) */
+                    <div className="w-full h-full flex flex-col justify-between p-8 sm:p-14 text-slate-900 bg-[#eef0f2] rounded-3xl border border-transparent">
                       <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-300 text-[11px] font-mono font-bold text-slate-700 uppercase tracking-widest mb-10 shadow-2xs">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-300 text-[11px] font-mono font-bold text-slate-700 uppercase tracking-widest mb-10 shadow-2xs">
                           <Sparkles className="w-3.5 h-3.5 text-sky-600" />
                           {card.badge}
                         </div>
@@ -233,11 +232,11 @@ export const RisingSlideCardsSection: React.FC = () => {
                       </div>
                     </div>
                   ) : (
-                    /* CARDS 2..6: Project Feature Card (Matches Reference Image Cards 2 & 3) */
-                    <div className="w-[320px] sm:w-[540px] lg:w-[620px] h-[520px] sm:h-[580px] bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col justify-between group">
+                    /* CARDS 2..6: Project Feature Card (Right 50% in initial image view) */
+                    <div className="w-full h-full bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col justify-between group">
                       
-                      {/* Inner Image Container with Text Overlay */}
-                      <div className={`relative w-full h-[340px] sm:h-[390px] rounded-2xl overflow-hidden ${card.darkCard ? 'bg-slate-950' : 'bg-slate-900'}`}>
+                      {/* Inner Visual Container with Text Overlay */}
+                      <div className={`relative w-full h-[68%] rounded-2xl overflow-hidden ${card.darkCard ? 'bg-slate-950' : 'bg-slate-900'}`}>
                         {card.imageUrl && (
                           <img 
                             src={card.imageUrl} 
@@ -250,7 +249,7 @@ export const RisingSlideCardsSection: React.FC = () => {
                         {/* Top Quote Tagline */}
                         {card.quote && (
                           <div className="absolute top-5 left-5 right-5 z-10 flex items-start justify-between">
-                            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-white/90 uppercase max-w-[260px] drop-shadow-sm leading-snug">
+                            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-white/90 uppercase max-w-[280px] drop-shadow-sm leading-snug">
                               {card.quote}
                             </span>
                             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/20 backdrop-blur-md text-white border border-white/30 shrink-0">
@@ -259,7 +258,7 @@ export const RisingSlideCardsSection: React.FC = () => {
                           </div>
                         )}
 
-                        {/* Center Hero Overlay Text (e.g. "Hi, I'm Alex." or "Pulse Studio") */}
+                        {/* Center Hero Overlay Text (e.g. "Hi, I'm Alex.") */}
                         {card.heroText && (
                           <div className="absolute bottom-6 left-6 right-6 z-10">
                             <h3 className="text-3xl sm:text-5xl font-medium text-white tracking-tight leading-tight drop-shadow-md font-sans">
@@ -270,7 +269,7 @@ export const RisingSlideCardsSection: React.FC = () => {
                       </div>
 
                       {/* Card Details Footer Row (Below Image) */}
-                      <div className="pt-4 flex items-end justify-between gap-4">
+                      <div className="pt-3 flex items-end justify-between gap-4">
                         <div className="flex flex-col gap-1 max-w-md">
                           <h4 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight font-sans">
                             {card.title}
