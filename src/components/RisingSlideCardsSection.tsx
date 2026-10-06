@@ -76,7 +76,7 @@ export const RisingSlideCardsSection: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
 
-  // RAF sampling of scroll track progress
+  // RAF sampling of scroll track progress over pinned viewport track
   useEffect(() => {
     let ticking = false;
 
@@ -93,8 +93,9 @@ export const RisingSlideCardsSection: React.FC = () => {
               const p = Math.max(0, Math.min(1, scrolled / totalDist));
               setScrollProgress(p);
 
-              // Update active index based on horizontal slide
-              const idx = Math.min(FEATURE_CARDS.length - 1, Math.floor(p * FEATURE_CARDS.length));
+              // Update active index based on motion phase
+              const slideProgress = Math.max(0, (p - 0.25) / 0.65);
+              const idx = Math.min(FEATURE_CARDS.length - 1, Math.floor(slideProgress * FEATURE_CARDS.length));
               setActiveCardIndex(idx);
             }
           }
@@ -110,16 +111,17 @@ export const RisingSlideCardsSection: React.FC = () => {
   }, []);
 
   return (
-    <div ref={trackRef} className="relative w-full h-[350vh] bg-slate-50/50 border-t border-slate-200/80 select-none overflow-hidden">
-      {/* Sticky Viewport Container */}
-      <div className="sticky top-0 w-full h-screen flex flex-col justify-center overflow-hidden px-4 sm:px-8 lg:px-16 py-10">
+    /* Outer Scroll-Pinning Track (450vh freezes the screen completely during rise & slide) */
+    <div ref={trackRef} className="relative w-full h-[450vh] bg-slate-50/50 border-t border-slate-200/80 select-none">
+      {/* Sticky Viewport Container (Freezes/Pins Screen in Place) */}
+      <div className="sticky top-0 w-full h-screen flex flex-col justify-center overflow-hidden px-4 sm:px-8 lg:px-16 py-8">
         
         {/* Ambient Soft Glow Background */}
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-sky-100/60 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-1/4 w-[30rem] h-[30rem] bg-sky-100/70 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-1/4 left-1/4 w-[30rem] h-[30rem] bg-indigo-100/70 rounded-full blur-3xl pointer-events-none" />
 
         {/* Section Header */}
-        <div className="max-w-6xl w-full mx-auto mb-8 sm:mb-12 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 z-10">
+        <div className="max-w-6xl w-full mx-auto mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 z-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-[11px] font-mono tracking-widest text-sky-700 font-bold uppercase mb-3 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
@@ -130,8 +132,22 @@ export const RisingSlideCardsSection: React.FC = () => {
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-xs text-slate-500 bg-white/80 border border-slate-200/80 px-4 py-2 rounded-full backdrop-blur-md shadow-xs">
-            <span className="font-bold text-slate-900">{activeCardIndex + 1}</span> / {FEATURE_CARDS.length} Preset Features
+          {/* Frozen Viewport Motion Indicator */}
+          <div className="flex items-center gap-3 bg-white/90 border border-slate-200/90 px-4 py-2 rounded-full backdrop-blur-md shadow-xs z-10">
+            <div className="flex flex-col gap-0.5 text-right font-mono text-[10px]">
+              <span className="font-bold text-slate-900 uppercase">
+                {scrollProgress < 0.25 ? 'STAGE 1: RISING UP' : scrollProgress < 0.85 ? 'STAGE 2: SLIDING LEFT' : 'STAGE 3: FEATURE MATRIX'}
+              </span>
+              <span className="text-slate-500">
+                Card {activeCardIndex + 1} of {FEATURE_CARDS.length}
+              </span>
+            </div>
+            <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+              <div 
+                className="h-full bg-gradient-to-r from-sky-500 to-indigo-600 transition-all duration-150"
+                style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+              />
+            </div>
           </div>
         </div>
 
@@ -141,28 +157,32 @@ export const RisingSlideCardsSection: React.FC = () => {
             {FEATURE_CARDS.map((card, idx) => {
               const IconComp = card.icon;
 
-              // Motion math:
-              // Phase 1 (0% -> 35%): Cards enter from Right-Bottom (translateX: +400px -> 0, translateY: +300px -> 0)
-              // Phase 2 (35% -> 100%): Cards slide LEFT across the viewport (translateX: 0 -> - (idx * 340px))
+              // Motion Math while Screen is Frozen:
+              // Stage 1 (0.00 -> 0.25): Rise UP from Right-Bottom corner
+              // Stage 2 (0.25 -> 0.85): Slide LEFT horizontally across frozen viewport
+              // Stage 3 (0.85 -> 1.00): Fully visible hold state before unfreezing page scroll
 
-              const risePhase = Math.min(1, scrollProgress / 0.35);
-              const slidePhase = Math.max(0, (scrollProgress - 0.35) / 0.65);
+              const riseProgress = Math.min(1, scrollProgress / 0.25);
+              const slideProgress = Math.max(0, Math.min(1, (scrollProgress - 0.25) / 0.60));
 
-              // Staggered entry from right-bottom
-              const staggerDelay = idx * 0.15;
-              const cardRiseProgress = Math.max(0, Math.min(1, (risePhase - staggerDelay / 2) / (1 - staggerDelay / 2)));
+              // Stagger delay per card during right-bottom rise
+              const stagger = idx * 0.12;
+              const cardRiseProgress = Math.max(0, Math.min(1, (riseProgress - stagger) / (1 - stagger)));
 
-              // Right-bottom starting offset
-              const initialRightX = (1 - cardRiseProgress) * (400 + idx * 80);
-              const initialBottomY = (1 - cardRiseProgress) * (280 + idx * 50);
+              // Right-bottom initial offset (Offscreen right & bottom)
+              const startRightX = (1 - cardRiseProgress) * (500 + idx * 100);
+              const startBottomY = (1 - cardRiseProgress) * (350 + idx * 80);
 
-              // Horizontal slide left offset
-              const slideLeftX = -slidePhase * (FEATURE_CARDS.length - 1) * 340;
+              // Horizontal slide left distance (moves cards smoothly across screen)
+              const slideLeftX = -slideProgress * (FEATURE_CARDS.length - 1) * 360;
 
-              const totalX = initialRightX + slideLeftX;
-              const totalY = initialBottomY;
-              const opacity = Math.min(1, cardRiseProgress * 1.5);
-              const scale = 0.9 + cardRiseProgress * 0.1;
+              const totalX = startRightX + slideLeftX;
+              const totalY = startBottomY;
+
+              const opacity = Math.min(1, cardRiseProgress * 1.8);
+              const scale = 0.88 + cardRiseProgress * 0.12;
+
+              const isFocused = idx === activeCardIndex;
 
               return (
                 <div
@@ -172,7 +192,11 @@ export const RisingSlideCardsSection: React.FC = () => {
                     opacity,
                     willChange: 'transform, opacity',
                   }}
-                  className="shrink-0 w-[290px] sm:w-[350px] h-[380px] sm:h-[410px] rounded-3xl p-6 sm:p-8 bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgba(2,132,199,0.15)] hover:border-sky-400 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden"
+                  className={`shrink-0 w-[290px] sm:w-[350px] h-[380px] sm:h-[410px] rounded-3xl p-6 sm:p-8 bg-white/95 backdrop-blur-xl border transition-all duration-300 flex flex-col justify-between group relative overflow-hidden ${
+                    isFocused 
+                      ? 'border-sky-400 shadow-[0_20px_50px_rgba(2,132,199,0.18)] ring-2 ring-sky-300/40' 
+                      : 'border-slate-200/90 shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:border-sky-300 hover:shadow-lg'
+                  }`}
                 >
                   {/* Card Header Badge & Gradient Accent Bar */}
                   <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${card.gradient}`} />
