@@ -174,20 +174,20 @@ export const RisingSlideCardsSection: React.FC = () => {
 
               if (idx >= 2) {
                 // Card 3+ rise progress calculation based on scroll progress
-                const cardEntryStart = (idx - 2) * 0.22;
-                const cardEntryEnd = cardEntryStart + 0.22;
+                const cardEntryStart = (idx - 2) * 0.20;
+                const cardEntryEnd = cardEntryStart + 0.20;
 
                 if (scrollProgress < cardEntryStart) {
-                  // Not yet entered: peeked at bottom-right corner
-                  cardRiseY = 180;
-                  cardScale = 0.92;
-                  cardOpacity = 0.55;
+                  // Initially hidden offscreen: strictly ONLY 2 cards visible on initial load!
+                  cardRiseY = 300;
+                  cardScale = 0.85;
+                  cardOpacity = 0.0;
                 } else if (scrollProgress >= cardEntryStart && scrollProgress <= cardEntryEnd) {
-                  // Rising UP phase: transition Y 180px -> 0px
-                  const riseRatio = (scrollProgress - cardEntryStart) / 0.22;
-                  cardRiseY = (1 - riseRatio) * 180;
-                  cardScale = 0.92 + 0.08 * riseRatio;
-                  cardOpacity = 0.55 + 0.45 * riseRatio;
+                  // Rising UP from bottom-right phase: transition Y 300px -> 0px, opacity 0.0 -> 1.0
+                  const riseRatio = (scrollProgress - cardEntryStart) / 0.20;
+                  cardRiseY = (1 - riseRatio) * 300;
+                  cardScale = 0.85 + 0.15 * riseRatio;
+                  cardOpacity = Math.min(1.0, riseRatio * 1.5);
                 } else {
                   // Fully risen and aligned
                   cardRiseY = 0;
