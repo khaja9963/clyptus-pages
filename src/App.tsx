@@ -6,13 +6,11 @@ import { SpiralSlider } from './components/SpiralSlider';
 import { StudioCustomizer } from './components/StudioCustomizer';
 import { CodePromptModal } from './components/CodePromptModal';
 import { CardDetailModal } from './components/CardDetailModal';
-import { FeatureShowcase } from './components/FeatureShowcase';
 import { CinematicIntro } from './components/CinematicIntro';
 import { AiImpactSection } from './components/AiImpactSection';
 import { MetricsCounterSection } from './components/MetricsCounterSection';
 import { ContactSection } from './components/ContactSection';
 import { RisingSlideCardsSection } from './components/RisingSlideCardsSection';
-import confetti from 'canvas-confetti';
 
 export function App() {
   const [showIntro, setShowIntro] = useState<boolean>(true);
@@ -23,8 +21,6 @@ export function App() {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<SliderCard | null>(null);
   const [codeModalCard, setCodeModalCard] = useState<SliderCard | null>(null);
-  const [masterPromptCopied, setMasterPromptCopied] = useState<boolean>(false);
-
   // Filter cards by search term
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
@@ -35,26 +31,6 @@ export function App() {
       return matchesSearch;
     });
   }, [cards, searchQuery]);
-
-  // Master Clyptus Prompt Copy
-  const handleCopyMasterPrompt = () => {
-    const masterPrompt = `Create a cinematic 3D Spiral Slider (Helix Carousel) component in React with CSS 3D perspective and HTML transforms.
-Features required:
-1. Helix Geometry: Position cards along a vertical 3D spiral track using X = R*sin(θ), Y = pitch*i, Z = R*cos(θ).
-2. Frosted Far-Side Depth: Cards passing behind the central axis (Z < 0) have backdrop blur glassmorphism, lower opacity (0.4), and reduced scale so the back of the spiral is visible through gaps.
-3. Interaction: Mouse wheel winding, drag-and-fling momentum velocity physics, keyboard left/right navigation, and auto-rotation toggle.
-4. Focal Spotlight: Foreground active card expands with a glowing neon accent border and interactive details.`;
-
-    navigator.clipboard.writeText(masterPrompt);
-    setMasterPromptCopied(true);
-    confetti({
-      particleCount: 50,
-      spread: 90,
-      origin: { y: 0.8 },
-      colors: ['#0284c7', '#6366f1', '#10b981']
-    });
-    setTimeout(() => setMasterPromptCopied(false), 3000);
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-sky-500/20 selection:text-sky-800">
@@ -125,12 +101,6 @@ Features required:
 
           {/* AI Scroll-Driven Zoom Typography Section ("AI IS CHANGING HOW WE WORK.") */}
           <AiImpactSection />
-
-          {/* Architecture Specs Section */}
-          <FeatureShowcase
-            onCopyMainPrompt={handleCopyMasterPrompt}
-            copied={masterPromptCopied}
-          />
 
           {/* 5 Feature Cards Animated Section (Right-Bottom -> Up -> Slide Left) */}
           <RisingSlideCardsSection />

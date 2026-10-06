@@ -14,53 +14,53 @@ interface ProjectCard {
 }
 
 const PORTFOLIO_CARDS: ProjectCard[] = [
-  // Pair 1: Text Panel + Photo Panel
+  // Pair 1: Text Panel + Photo Panel (CEO)
   {
     id: 1,
     type: 'text',
-    category: 'CLYPTUS PORTFOLIO',
-    title: 'Selected work\n& explorations',
-    linkText: 'VIEW ALL PROJECTS',
+    category: 'CLYPTUS LEADERSHIP',
+    title: 'Meet Our Chief\nExecutive Officer',
+    linkText: 'EXECUTIVE LEADERSHIP',
   },
   {
     id: 2,
     type: 'photo',
-    category: 'AI DIGITAL WORKERS',
-    title: 'MyWorker AI',
-    subtitle: "Hi, I'm Alex.",
-    description: 'AI platform simplifying hiring, management, and workforce scaling.',
-    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop',
-    linkText: 'EXPLORE PROJECT',
-    badge: 'BOOST YOUR WORKFORCE WITH AI DIGITAL WORKERS',
+    category: 'CHIEF EXECUTIVE OFFICER',
+    title: 'Vamsi Krishna Are',
+    subtitle: 'Vamsi Krishna Are',
+    description: 'Chief Executive Officer leading Clyptus Software Solutions towards enterprise AI & cloud innovation.',
+    imageUrl: '/ceo_vamsi_krishna.png',
+    linkText: 'EXPLORE PROFILE',
+    badge: 'CHIEF EXECUTIVE OFFICER • CLYPTUS',
   },
 
-  // Pair 2: Text Panel + Photo Panel
+  // Pair 2: Text Panel + Photo Panel (Manager)
   {
     id: 3,
     type: 'text',
-    category: 'ORACLE & CLOUD SCALE',
-    title: 'Cloud scale\n& data fabric',
-    linkText: 'VIEW CLOUD SOLUTIONS',
+    category: 'CLYPTUS MANAGEMENT',
+    title: 'Our\nManager',
+    linkText: 'MANAGEMENT TEAM',
   },
   {
     id: 4,
     type: 'photo',
-    category: 'ORACLE DATA HUB',
-    title: 'Oracle Data Fabric',
-    subtitle: '3.2x Throughput.',
-    description: 'High-availability data pipelines and hybrid cloud clusters optimized for ultra-low latency.',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop',
-    linkText: 'EXPLORE PROJECT',
-    badge: '3.2X DATABASE PERFORMANCE BOOST',
+    category: 'OPERATIONS MANAGER',
+    title: 'Operations Manager',
+    subtitle: 'Operations & Delivery',
+    description: 'Leading cross-functional engineering teams to ensure seamless delivery and client satisfaction.',
+    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1200&auto=format&fit=crop',
+    linkText: 'EXPLORE PROFILE',
+    badge: 'OPERATIONS MANAGER • CLYPTUS',
   },
 
-  // Pair 3: Text Panel + Photo Panel
+  // Pair 3: Text Panel + Photo Panel (Project Manager)
   {
     id: 5,
     type: 'text',
-    category: 'ENTERPRISE SECURITY',
-    title: 'Zero-trust\n& AI governance',
-    linkText: 'VIEW SECURITY SPECS',
+    category: 'PROJECT MANAGEMENT',
+    title: 'Project\nManager',
+    linkText: 'PROJECT LEADERSHIP',
   },
   {
     id: 6,
@@ -129,42 +129,49 @@ export const RisingSlideCardsSection: React.FC = () => {
   }, []);
 
   const totalCards = PORTFOLIO_CARDS.length;
-  // Total horizontal shift distance in vw (Cards 3 to 8 shift left across screen)
-  const maxShiftVw = (totalCards - 2) * 50; 
+  // Card width in vw for 50/50 equal split (50vw width per card, exactly matching TRIONN reference design)
+  const CARD_WIDTH_VW = 50;
+  const maxShiftVw = (totalCards - 2) * CARD_WIDTH_VW; 
   const currentShiftVw = scrollProgress * maxShiftVw;
 
   return (
     /* Outer Pinned Scroll Track (550vh freezes the screen in place while cards rise & slide) */
     <div ref={trackRef} className="relative w-full h-[550vh] bg-[#e9e8e3] select-none font-sans border-t border-slate-300/60">
-      {/* Sticky Full-Screen Viewport Container (0px margin, 2 full-height cards side by side with NO GAP) */}
-      <div className="sticky top-0 w-full h-screen flex overflow-hidden">
+      {/* Sticky Full-Screen Viewport Container (0px horizontal padding, 50/50 equal 2-card split) */}
+      <div className="sticky top-0 w-full h-screen flex overflow-hidden pt-20 sm:pt-24 pb-4">
         
         {/* Horizontal Card Track container with 0 gap */}
         <div className="flex w-full h-full gap-0 flex-nowrap relative">
           {PORTFOLIO_CARDS.map((card, idx) => {
             // Position Math:
-            // Card 1: 0vw to 50vw (Left Half)
-            // Card 2: 50vw to 100vw (Right Half)
-            // Cards 3, 4, 5, 6, 7, 8: Start at 100vw, 150vw, 200vw...
-            
-            const cardBaseX = idx * 50; // in vw
+            // 50vw width per card for 50/50 equal panel sizes touching side-by-side
+            const cardBaseX = idx * CARD_WIDTH_VW; // in vw
             const currentPosX = cardBaseX - currentShiftVw; // in vw
 
-            // Rise UP from bottom-right calculation for incoming cards (Cards >= 2)
+            // 1. Entrance Math: Rise UP from bottom-right (for cards entering from the right)
             let riseY = 0; // in vh
-            if (idx >= 2) {
-              // As currentPosX approaches 50vw (right half of viewport), riseY decreases from +80vh to 0vh
+            if (currentPosX > 50) {
               const distanceToViewportRight = currentPosX - 50;
-              if (distanceToViewportRight > 0) {
-                riseY = Math.min(80, distanceToViewportRight * 1.5);
-              }
+              riseY = Math.min(85, distanceToViewportRight * 1.6);
             }
+
+            // 2. Exit Math: Slide DOWN to bottom-left (for cards exiting past the left edge)
+            let exitY = 0; // in vh
+            let exitX = 0; // in vw
+            if (currentPosX < 0) {
+              const distancePastLeftEdge = Math.abs(currentPosX);
+              exitY = Math.min(85, distancePastLeftEdge * 1.6); // slides down to bottom
+              exitX = -distancePastLeftEdge * 0.4; // slides further left
+            }
+
+            const totalX = currentPosX + exitX;
+            const totalY = riseY + exitY;
 
             return (
               <div
                 key={card.id}
                 style={{
-                  transform: `translate3d(${currentPosX}vw, ${riseY}vh, 0)`,
+                  transform: `translate3d(${totalX}vw, ${totalY}vh, 0)`,
                   willChange: 'transform',
                 }}
                 className="absolute top-0 bottom-0 left-0 w-full md:w-1/2 md:min-w-[50vw] h-full shrink-0 flex flex-col justify-between p-8 sm:p-12 lg:p-16 border-r border-slate-300/40 bg-[#e9e8e3] text-slate-900 overflow-hidden group transition-all duration-75 ease-out"
