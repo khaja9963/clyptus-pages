@@ -1,94 +1,80 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, ChevronRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Sparkles, Layers, Cpu, ShieldCheck } from 'lucide-react';
 
-interface ProjectCardItem {
+interface ProjectCard {
   id: number;
-  isHeroOverview?: boolean;
   category: string;
-  badge: string;
-  quote?: string;
-  heroText?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   description: string;
   imageUrl?: string;
-  darkCard?: boolean;
+  isHero?: boolean;
+  linkText: string;
+  badge?: string;
+  icon?: React.ElementType;
 }
 
-const PROJECT_CARDS: ProjectCardItem[] = [
+const PORTFOLIO_CARDS: ProjectCard[] = [
   {
     id: 1,
-    isHeroOverview: true,
     category: 'CLYPTUS PORTFOLIO',
-    badge: 'SELECTED WORK',
-    title: 'Selected work & explorations',
+    title: 'Selected work\n& explorations',
     subtitle: 'ENGINEERED FOR ENTERPRISE SPEED',
-    description: 'Transforming legacy operations into high-velocity, autonomous AI workflows and resilient multi-cloud architectures.',
+    description: 'Autonomous AI digital workers, cloud infrastructure scaling, and zero-trust security solutions.',
+    isHero: true,
+    linkText: 'VIEW ALL PROJECTS',
   },
   {
     id: 2,
     category: 'AI DIGITAL WORKERS',
-    badge: 'FEATURE #01',
-    quote: 'BOOST YOUR WORKFORCE WITH AI DIGITAL WORKERS',
-    heroText: "Hi, I'm Alex.",
     title: 'MyWorker AI',
-    subtitle: 'Autonomous Workforce Scaling',
+    subtitle: "Hi, I'm Alex.",
     description: 'AI platform simplifying hiring, management, and workforce scaling.',
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop',
+    linkText: 'EXPLORE PROJECT',
+    badge: 'BOOST YOUR WORKFORCE WITH AI DIGITAL WORKERS',
+    icon: Sparkles,
   },
   {
     id: 3,
-    category: 'AUDIO & MEDIA AI',
-    badge: 'FEATURE #02',
-    quote: 'Pulse Studio®',
-    heroText: 'An Independent Music 🎵 Studio Shaped by Sound 🪩, Built to Move Culture.',
-    title: 'Pulse Studio',
-    subtitle: 'Motion-Led Sound Architecture',
-    description: 'A motion-led studio website showcasing artists, projects, and sound culture.',
-    imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop',
-    darkCard: true,
+    category: 'ORACLE & CLOUD SCALE',
+    title: 'Oracle Data Fabric',
+    subtitle: 'High-Throughput Storage',
+    description: 'High-availability data pipelines and hybrid cloud clusters optimized for low latency.',
+    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop',
+    linkText: 'EXPLORE PROJECT',
+    badge: '3.2X DATABASE PERFORMANCE BOOST',
+    icon: Cpu,
   },
   {
     id: 4,
-    category: 'ARCHITECTURE & SPATIAL',
-    badge: 'FEATURE #03',
-    quote: 'LIVE LIFE IN LUXURY.',
-    heroText: 'Live Life in Luxury.',
-    title: 'LoftLoom Architecture',
-    subtitle: 'Bespoke Spatial Design',
-    description: 'High-end architectural design studio creating bespoke residential spaces.',
-    imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop',
+    category: 'ENTERPRISE SECURITY',
+    title: 'Zero-Trust Shield',
+    subtitle: 'Encrypted AI Governance',
+    description: 'Continuous compliance tracking, threat detection, and military-grade encryption.',
+    imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1200&auto=format&fit=crop',
+    linkText: 'EXPLORE PROJECT',
+    badge: 'ISO 27001 & COMPLIANCE READY',
+    icon: ShieldCheck,
   },
   {
     id: 5,
-    category: 'MULTI-CLOUD HYBRID',
-    badge: 'FEATURE #04',
-    quote: 'HIGH-AVAILABILITY CLUSTER INFRASTRUCTURE',
-    heroText: '3.2x Throughput.',
-    title: 'Oracle Cloud Optimizer',
-    subtitle: 'Database Query Acceleration',
-    description: 'Enterprise database acceleration engine with zero downtime replication.',
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop',
-  },
-  {
-    id: 6,
-    category: 'ZERO-TRUST SECURITY',
-    badge: 'FEATURE #05',
-    quote: 'MILITARY-GRADE COMPLIANCE & GOVERNANCE',
-    heroText: 'ISO 27001 Ready.',
-    title: 'Shield AI Governance',
-    subtitle: 'Continuous Threat Auditing',
-    description: 'Military-grade encryption and automated policy auditing for enterprise clusters.',
-    imageUrl: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1200&auto=format&fit=crop',
+    category: 'ADAPTIVE ARCHITECTURE',
+    title: 'Self-Healing Fabric',
+    subtitle: 'Cloud Microservice Engine',
+    description: 'Resilient cloud-native microservice fabrics that auto-scale dynamically under peak global load.',
+    imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop',
+    linkText: 'EXPLORE PROJECT',
+    badge: 'AUTONOMOUS AUTO-SCALING CLUSTERS',
+    icon: Layers,
   },
 ];
 
 export const RisingSlideCardsSection: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [activeCardIndex, setActiveCardIndex] = useState<number>(0);
 
-  // RAF sampling of scroll progress over 500vh pinned track
+  // RAF sampling of scroll track progress over 450vh pinned viewport
   useEffect(() => {
     let ticking = false;
 
@@ -104,10 +90,6 @@ export const RisingSlideCardsSection: React.FC = () => {
               const scrolled = -rect.top;
               const p = Math.max(0, Math.min(1, scrolled / totalDist));
               setScrollProgress(p);
-
-              // Focused card index
-              const idx = Math.min(PROJECT_CARDS.length - 1, Math.floor(p * (PROJECT_CARDS.length - 1)));
-              setActiveCardIndex(idx);
             }
           }
           ticking = false;
@@ -121,175 +103,140 @@ export const RisingSlideCardsSection: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Motion Math:
-  // Initial state (0% scroll): ONLY 2 CARDS visible (Card 1 on left half 50vw, Card 2 on right half 50vw).
-  // All remaining cards (Card 3, 4, 5, 6) start COMPLETELY OFFSCREEN at bottom right (opacity: 0, translateY: +500px).
-  //
-  // Phase 1 (0.00 -> 0.20): Card 3 rises UP from bottom right offscreen into alignment alongside Card 2.
-  // Phase 2 (0.20 -> 0.90): Row slides LEFT so Card 3 moves to main focus, then Card 4 rises UP & slides left, etc.
-
-  const slideProgress = Math.max(0, (scrollProgress - 0.20) / 0.75);
-  // Total slide amount in vw (50vw per card shift)
-  const slideVW = slideProgress * (PROJECT_CARDS.length - 2) * 50;
+  const totalCards = PORTFOLIO_CARDS.length;
+  // Total horizontal shift distance in vw (Cards 3, 4, 5 shift left across screen)
+  const maxShiftVw = (totalCards - 2) * 50; 
+  const currentShiftVw = scrollProgress * maxShiftVw;
 
   return (
-    /* Outer Pinned Scroll Track (500vh locks the viewport completely) */
-    <div ref={trackRef} className="relative w-full h-[500vh] bg-[#eef0f2] select-none">
-      {/* Sticky Viewport Stage (100vh Full Screen Frozen Container) */}
-      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-between py-6 px-4 sm:px-10">
+    /* Outer Pinned Scroll Track (450vh freezes the screen in place while cards rise & slide) */
+    <div ref={trackRef} className="relative w-full h-[450vh] bg-[#e9e8e3] select-none font-sans border-t border-slate-300/60">
+      {/* Sticky Full-Screen Viewport Container (0px margin, 2 full-height cards side by side with NO GAP) */}
+      <div className="sticky top-0 w-full h-screen flex overflow-hidden">
         
-        {/* Minimal Top Controls Bar */}
-        <div className="w-full max-w-7xl mx-auto flex items-center justify-between z-20 pb-2">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-            <span className="font-mono text-xs font-bold text-slate-800 tracking-wider uppercase">
-              CLYPTUS WORK & EXPLORATIONS
-            </span>
-          </div>
+        {/* Horizontal Card Track container with 0 gap */}
+        <div className="flex w-full h-full gap-0 flex-nowrap relative">
+          {PORTFOLIO_CARDS.map((card, idx) => {
+            // Position Math:
+            // Card 1: 0vw to 50vw (Left Half)
+            // Card 2: 50vw to 100vw (Right Half)
+            // Cards 3, 4, 5: Start at 100vw, 150vw, 200vw
+            
+            const cardBaseX = idx * 50; // in vw
+            const currentPosX = cardBaseX - currentShiftVw; // in vw
 
-          <div className="flex items-center gap-3 bg-white/80 border border-slate-300/80 px-4 py-1.5 rounded-full backdrop-blur-md shadow-2xs font-mono text-xs text-slate-600">
-            <span className="font-bold text-slate-900">0{activeCardIndex + 1}</span> / 0{PROJECT_CARDS.length}
-            <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden ml-1">
-              <div 
-                className="h-full bg-slate-900 transition-all duration-150"
-                style={{ width: `${Math.round(scrollProgress * 100)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 2-Card Full-Screen Viewport Rail (50vw Left + 50vw Right initially) */}
-        <div className="relative w-full flex-1 flex items-center overflow-hidden z-10">
-          <div 
-            className="flex w-full h-full items-center transition-transform duration-75 ease-out"
-            style={{
-              transform: `translate3d(-${slideVW}vw, 0, 0)`,
-              willChange: 'transform',
-            }}
-          >
-            {PROJECT_CARDS.map((card, idx) => {
-              // Rise UP motion calculation for Card 3+
-              // Initially (at 0% scroll), Card 1 and Card 2 are 100% visible (translateY: 0, opacity: 1).
-              // Card 3+ starts COMPLETELY OFFSCREEN at bottom right (opacity: 0, translateY: +500px).
-              let cardRiseY = 0;
-              let cardOpacity = 1.0;
-
-              if (idx >= 2) {
-                // Card entry window mapped to scrollProgress
-                const cardEntryStart = (idx - 2) * 0.18;
-                const cardEntryEnd = cardEntryStart + 0.18;
-
-                if (scrollProgress <= cardEntryStart) {
-                  // Completely hidden offscreen at bottom right
-                  cardRiseY = 500;
-                  cardOpacity = 0;
-                } else if (scrollProgress > cardEntryStart && scrollProgress <= cardEntryEnd) {
-                  // Rises UP into alignment
-                  const ratio = (scrollProgress - cardEntryStart) / 0.18;
-                  cardRiseY = (1 - ratio) * 500;
-                  cardOpacity = Math.min(1, ratio * 1.5);
-                } else {
-                  // Fully risen into position
-                  cardRiseY = 0;
-                  cardOpacity = 1.0;
-                }
+            // Rise UP from bottom-right calculation for incoming cards (Cards >= 2)
+            let riseY = 0; // in vh
+            if (idx >= 2) {
+              // As currentPosX approaches 50vw (right half of viewport), riseY decreases from +80vh to 0vh
+              const distanceToViewportRight = currentPosX - 50;
+              if (distanceToViewportRight > 0) {
+                riseY = Math.min(80, distanceToViewportRight * 1.5);
               }
+            }
 
-              return (
-                <div
-                  key={card.id}
-                  style={{
-                    transform: `translate3d(0, ${cardRiseY}px, 0)`,
-                    opacity: cardOpacity,
-                    willChange: 'transform, opacity',
-                  }}
-                  className="shrink-0 w-[100vw] md:w-[50vw] h-[85vh] p-3 sm:p-5 flex flex-col justify-center transition-transform duration-100 ease-out"
-                >
-                  {card.isHeroOverview ? (
-                    /* CARD 1: Left Overview Title Card (Exactly Left 50% in initial image view) */
-                    <div className="w-full h-full flex flex-col justify-between p-8 sm:p-14 text-slate-900 bg-[#eef0f2] rounded-3xl border border-transparent">
-                      <div>
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-300 text-[11px] font-mono font-bold text-slate-700 uppercase tracking-widest mb-10 shadow-2xs">
-                          <Sparkles className="w-3.5 h-3.5 text-sky-600" />
-                          {card.badge}
-                        </div>
-
-                        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-slate-900 font-sans leading-[1.08] mb-6">
-                          Selected work <br />
-                          <span className="text-slate-500 font-normal">& explorations</span>
-                        </h2>
-                      </div>
-
-                      <div className="pt-6 border-t border-slate-300/80 flex flex-col gap-4">
-                        <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
-                          {card.description}
-                        </p>
-
-                        <button className="inline-flex items-center gap-2 text-xs font-mono font-bold text-slate-900 hover:text-sky-600 uppercase tracking-widest pb-1 border-b border-slate-900 hover:border-sky-600 transition-all self-start">
-                          VIEW ALL PROJECTS
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
-                      </div>
+            return (
+              <div
+                key={card.id}
+                style={{
+                  transform: `translate3d(${currentPosX}vw, ${riseY}vh, 0)`,
+                  willChange: 'transform',
+                }}
+                className="absolute top-0 bottom-0 left-0 w-full md:w-1/2 md:min-w-[50vw] h-full shrink-0 flex flex-col justify-between p-8 sm:p-12 lg:p-16 border-r border-slate-300/40 bg-[#e9e8e3] text-slate-900 overflow-hidden group transition-all duration-75 ease-out"
+              >
+                {card.isHero ? (
+                  /* CARD 1: Full-Screen Left Title Panel (Matches Reference Image) */
+                  <div className="w-full h-full flex flex-col justify-between z-10">
+                    {/* Top Tagline Badge */}
+                    <div className="flex items-center gap-2 font-mono text-xs tracking-widest text-slate-500 font-bold uppercase">
+                      <span className="w-2 h-2 rounded-full bg-slate-900 animate-pulse" />
+                      {card.category}
                     </div>
-                  ) : (
-                    /* CARDS 2..6: Project Feature Card (Right 50% in initial image view) */
-                    <div className="w-full h-full bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col justify-between group">
+
+                    {/* Main Headline (Exact Reference Typography) */}
+                    <div className="my-auto py-12">
+                      <h2 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-normal text-[#1a1a1a] tracking-tight leading-[1.02] whitespace-pre-line">
+                        {card.title}
+                      </h2>
+                    </div>
+
+                    {/* Bottom Action Link (Exact Reference Line Button) */}
+                    <div className="pt-6 border-t border-slate-300/50 flex items-center justify-between">
+                      <button className="inline-flex items-center gap-3 font-mono text-xs sm:text-sm tracking-widest text-slate-800 font-bold uppercase group-hover:text-black transition-colors border-b border-slate-400 pb-1">
+                        {card.linkText}
+                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                      </button>
+
+                      <span className="font-mono text-xs text-slate-400">
+                        01 / 0{totalCards}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  /* CARDS 2 to 5: Full Image & Content Project Cards (Matches Reference Image) */
+                  <div className="w-full h-full flex flex-col justify-between z-10">
+                    {/* Card Top Graphic Frame / Image Cover */}
+                    <div className="relative w-full flex-1 rounded-2xl overflow-hidden mb-6 bg-slate-200 shadow-sm border border-slate-300/40">
+                      {card.imageUrl ? (
+                        <img
+                          src={card.imageUrl}
+                          alt={card.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-200 via-slate-100 to-slate-300" />
+                      )}
                       
-                      {/* Inner Visual Container with Text Overlay */}
-                      <div className={`relative w-full h-[68%] rounded-2xl overflow-hidden ${card.darkCard ? 'bg-slate-950' : 'bg-slate-900'}`}>
-                        {card.imageUrl && (
-                          <img 
-                            src={card.imageUrl} 
-                            alt={card.title}
-                            className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-700 ease-out"
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+                      {/* Gradient Dark Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                        {/* Top Quote Tagline */}
-                        {card.quote && (
-                          <div className="absolute top-5 left-5 right-5 z-10 flex items-start justify-between">
-                            <span className="text-[11px] sm:text-xs font-mono font-bold tracking-widest text-white/90 uppercase max-w-[280px] drop-shadow-sm leading-snug">
-                              {card.quote}
-                            </span>
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/20 backdrop-blur-md text-white border border-white/30 shrink-0">
-                              {card.badge}
-                            </span>
-                          </div>
-                        )}
+                      {/* Top Badge inside Image */}
+                      {card.badge && (
+                        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                          <span className="px-3 py-1 rounded-full text-[10px] font-mono tracking-widest font-bold uppercase bg-white/90 backdrop-blur-md text-slate-900 border border-white/50 shadow-sm">
+                            {card.badge}
+                          </span>
+                        </div>
+                      )}
 
-                        {/* Center Hero Overlay Text (e.g. "Hi, I'm Alex.") */}
-                        {card.heroText && (
-                          <div className="absolute bottom-6 left-6 right-6 z-10">
-                            <h3 className="text-3xl sm:text-5xl font-medium text-white tracking-tight leading-tight drop-shadow-md font-sans">
-                              {card.heroText}
-                            </h3>
-                          </div>
-                        )}
+                      {/* Overlay Title inside Image (e.g. "Hi, I'm Alex.") */}
+                      {card.subtitle && (
+                        <div className="absolute bottom-6 left-6 right-6">
+                          <h3 className="text-3xl sm:text-5xl lg:text-6xl font-normal text-white tracking-tight drop-shadow-md">
+                            {card.subtitle}
+                          </h3>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bottom Metadata & Link Row (Matches Reference Image) */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-xl sm:text-2xl font-medium text-[#1a1a1a] tracking-tight">
+                          {card.title}
+                        </h4>
+
+                        <span className="font-mono text-xs text-slate-400">
+                          0{card.id} / 0{totalCards}
+                        </span>
                       </div>
 
-                      {/* Card Details Footer Row (Below Image) */}
-                      <div className="pt-3 flex items-end justify-between gap-4">
-                        <div className="flex flex-col gap-1 max-w-md">
-                          <h4 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight font-sans">
-                            {card.title}
-                          </h4>
-                          <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed line-clamp-1">
-                            {card.description}
-                          </p>
-                        </div>
+                      <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed mb-4 max-w-md">
+                        {card.description}
+                      </p>
 
-                        <button className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-slate-800 hover:text-sky-600 uppercase tracking-widest pb-0.5 border-b border-slate-400 hover:border-sky-600 transition-all shrink-0">
-                          EXPLORE PROJECT
-                          <ArrowUpRight className="w-4 h-4" />
+                      <div className="pt-3 border-t border-slate-300/50 flex items-center justify-between">
+                        <button className="inline-flex items-center gap-2 font-mono text-xs tracking-widest text-slate-800 font-bold uppercase group-hover:text-black transition-colors border-b border-slate-400 pb-1">
+                          {card.linkText}
+                          <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </button>
                       </div>
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
