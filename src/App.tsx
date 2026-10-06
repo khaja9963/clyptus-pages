@@ -11,6 +11,7 @@ import { CinematicIntro } from './components/CinematicIntro';
 import { AiImpactSection } from './components/AiImpactSection';
 import { MetricsCounterSection } from './components/MetricsCounterSection';
 import { ContactSection } from './components/ContactSection';
+import { SlideUpLeftCardsSection } from './components/SlideUpLeftCardsSection';
 import confetti from 'canvas-confetti';
 
 export function App() {
@@ -122,8 +123,11 @@ Features required:
           {/* Metrics Counter Animated Section */}
           <MetricsCounterSection />
 
-          {/* AI Scroll-Driven Zoom Typography Section ("AI IS CHANGING HOW WE WORK.") */}
+          {/* AI Scroll-Driven Zoom Typography Section ("SMART IT SERVICES..." -> "ADAPTIVE DESIGN AND CONTENT STRATEGY.") */}
           <AiImpactSection />
+
+          {/* Feature Cards Animated Section: Bottom-Right -> Up -> Slide Left */}
+          <SlideUpLeftCardsSection />
 
           {/* Architecture Specs Section */}
           <FeatureShowcase
