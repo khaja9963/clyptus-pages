@@ -165,7 +165,7 @@ export const AiImpactSection: React.FC = () => {
     };
   }, []);
 
-  // Stage 1: "AI IS CHANGING HOW WE WORK." (progress 0.0 -> 0.46)
+  // Stage 1: "SMART IT SERVICES TO ELEVATE YOUR BUSINESS SUCCESS." (progress 0.0 -> 0.46)
   const stage1Scale = 1.0 + Math.pow(Math.min(1, progress / 0.45), 1.2) * 0.6;
   const stage1Opacity = progress < 0.32 
     ? 1.0 
@@ -219,7 +219,7 @@ export const AiImpactSection: React.FC = () => {
           </div>
         ))}
 
-        {/* STAGE 1: Scroll-Driven Zooming Typography with Giggle/Jiggle Effect ("AI IS CHANGING HOW WE WORK.") */}
+        {/* STAGE 1: Scroll-Driven Zooming Typography with Giggle/Jiggle Effect ("SMART IT SERVICES TO ELEVATE YOUR BUSINESS SUCCESS.") */}
         {stage1Opacity > 0 && (
           <div
             className="absolute z-10 flex flex-col items-center justify-center text-center px-4 w-full max-w-5xl transition-transform duration-75 ease-out"
@@ -230,25 +230,25 @@ export const AiImpactSection: React.FC = () => {
               willChange: 'transform, opacity, filter',
             }}
           >
-            <div className="flex flex-col items-center justify-center leading-[0.9] tracking-tight uppercase font-black text-slate-950 text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[7rem]">
-              {/* Line 1: AI IS */}
+            <div className="flex flex-col items-center justify-center leading-[0.9] tracking-tight uppercase font-black text-slate-950 text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem]">
+              {/* Line 1: SMART IT */}
               <div className="text-slate-950 font-black">
-                <GiggleText text="AI IS" baseDelay={0} />
+                <GiggleText text="SMART IT" baseDelay={0} />
               </div>
 
-              {/* Line 2: CHANGING (Electric Royal Blue with Giggle Effect) */}
+              {/* Line 2: SERVICES (Electric Royal Blue with Giggle Effect) */}
               <div className="font-black text-[#2563eb] my-1">
-                <GiggleText text="CHANGING" baseDelay={0.4} />
+                <GiggleText text="SERVICES" baseDelay={0.3} />
               </div>
 
-              {/* Line 3: HOW WE */}
+              {/* Line 3: TO ELEVATE YOUR */}
               <div className="text-slate-950 font-black">
-                <GiggleText text="HOW WE" baseDelay={0.8} />
+                <GiggleText text="TO ELEVATE YOUR" baseDelay={0.6} />
               </div>
 
-              {/* Line 4: WORK. */}
+              {/* Line 4: BUSINESS SUCCESS. */}
               <div className="text-slate-950 font-black">
-                <GiggleText text="WORK." baseDelay={1.2} />
+                <GiggleText text="BUSINESS SUCCESS." baseDelay={0.9} />
               </div>
             </div>
           </div>
