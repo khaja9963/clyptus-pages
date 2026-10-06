@@ -11,7 +11,7 @@ import { CinematicIntro } from './components/CinematicIntro';
 import { AiImpactSection } from './components/AiImpactSection';
 import { MetricsCounterSection } from './components/MetricsCounterSection';
 import { ContactSection } from './components/ContactSection';
-import { RisingSlidingCards } from './components/RisingSlidingCards';
+import { RisingSlideCardsSection } from './components/RisingSlideCardsSection';
 import confetti from 'canvas-confetti';
 
 export function App() {
@@ -98,9 +98,6 @@ Features required:
             </h1>
           </div>
 
-          {/* Animated 5 Feature Cards (Right-Bottom -> Up -> Slide Left) */}
-          <RisingSlidingCards />
-
           {/* 3D Spiral Slider Stage (Full Width Edge-to-Edge) */}
           <div className="w-full">
             {filteredCards.length > 0 ? (
@@ -134,6 +131,9 @@ Features required:
             onCopyMainPrompt={handleCopyMasterPrompt}
             copied={masterPromptCopied}
           />
+
+          {/* 5 Feature Cards Animated Section (Right-Bottom -> Up -> Slide Left) */}
+          <RisingSlideCardsSection />
         </main>
       )}
 
