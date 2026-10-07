@@ -99,8 +99,15 @@
 
 /* Animations */
 @keyframes floatSlow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(1deg); }
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
 }
 
 .animate-float {
@@ -108,8 +115,17 @@
 }
 
 @keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 .animate-pulse-glow {
@@ -117,15 +133,20 @@
 }
 
 @keyframes giggleWiggle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg) scale(1);
   }
+
   25% {
     transform: translateY(-3px) rotate(-1.5deg) scale(1.02);
   }
+
   50% {
     transform: translateY(2px) rotate(1.2deg) scale(0.98);
   }
+
   75% {
     transform: translateY(-1.5px) rotate(-1deg) scale(1.01);
   }
@@ -138,3 +159,17 @@
   will-change: transform;
 }
 
+@keyframes routeDash {
+  from {
+    stroke-dashoffset: 40;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-route-dash {
+  stroke-dasharray: 8 6;
+  animation: routeDash 2s linear infinite;
+}

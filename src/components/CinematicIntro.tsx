@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import logoImg from '../assets/logo.png';
 
 interface CinematicIntroProps {
   onComplete: () => void;
@@ -10,93 +11,169 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
   onComplete,
   onSkip,
 }) => {
-  // Animation phases: 'initial' | 'fadeInLogo' | 'fadeInTagline' | 'hold' | 'zoomOut' | 'done'
-  const [phase, setPhase] = useState<'initial' | 'fadeInLogo' | 'fadeInTagline' | 'hold' | 'zoomOut' | 'done'>('initial');
+  // Intro animation states:
+  // 'initial' -> 'drawingC' -> 'revealingWordmark' -> 'revealingTagline' -> 'energySweep' -> 'hold' -> 'exit' -> 'done'
+  const [phase, setPhase] = useState<
+    'initial' | 'drawingC' | 'revealingWordmark' | 'revealingTagline' | 'energySweep' | 'hold' | 'exit' | 'done'
+  >('initial');
+
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Sequence Timeline
-    const timer1 = setTimeout(() => setPhase('fadeInLogo'), 300);
-    const timer2 = setTimeout(() => setPhase('fadeInTagline'), 900);
-    const timer3 = setTimeout(() => setPhase('hold'), 1600);
-    const timer4 = setTimeout(() => setPhase('zoomOut'), 2800);
-    const timer5 = setTimeout(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) {
+      setReducedMotion(true);
+    }
+
+    // Precise Cinematic Timeline Sequence
+    const t1 = setTimeout(() => setPhase('drawingC'), 150);             // Step 2: Draw Orange C Symbol
+    const t2 = setTimeout(() => setPhase('revealingWordmark'), 900);    // Step 3: Wordmark reveals at ~70% C draw
+    const t3 = setTimeout(() => setPhase('revealingTagline'), 1600);    // Step 4: Tagline fade up
+    const t4 = setTimeout(() => setPhase('energySweep'), 2200);       // Step 5: Orange + Blue Energy Stroke Sweep
+    const t5 = setTimeout(() => setPhase('hold'), 3400);              // Step 7: Hold full logo
+    const t6 = setTimeout(() => setPhase('exit'), 4400);              // Step 8: Smooth transition out
+    const t7 = setTimeout(() => {
       setPhase('done');
       onComplete();
-    }, 3700);
+    }, 5200);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
-      clearTimeout(timer5);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
+      clearTimeout(t6);
+      clearTimeout(t7);
     };
   }, [onComplete]);
 
   if (phase === 'done') return null;
 
-  const isLogoVisible = phase === 'fadeInLogo' || phase === 'fadeInTagline' || phase === 'hold';
-  const isTaglineVisible = phase === 'fadeInTagline' || phase === 'hold';
-  const isZoomingOut = phase === 'zoomOut';
-
-  // Dynamic zoom scale calculation per phase
-  let zoomClass = 'scale-[0.75] opacity-0 blur-md';
-  if (phase === 'fadeInLogo') zoomClass = 'scale-[0.95] opacity-90 blur-0';
-  else if (phase === 'fadeInTagline') zoomClass = 'scale-[1.0] opacity-100 blur-0';
-  else if (phase === 'hold') zoomClass = 'scale-[1.10] opacity-100 blur-0';
-  else if (phase === 'zoomOut') zoomClass = 'scale-[1.50] opacity-0 blur-xl';
+  const isCDrawn = phase !== 'initial';
+  const isWordmarkRevealed =
+    phase === 'revealingWordmark' ||
+    phase === 'revealingTagline' ||
+    phase === 'energySweep' ||
+    phase === 'hold' ||
+    phase === 'exit';
+  const isTaglineRevealed =
+    phase === 'revealingTagline' ||
+    phase === 'energySweep' ||
+    phase === 'hold' ||
+    phase === 'exit';
+  const isEnergySweeping = phase === 'energySweep' || phase === 'hold' || phase === 'exit';
+  const isExiting = phase === 'exit';
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-white select-none transition-all duration-1000 ease-in-out ${
-        isZoomingOut ? 'bg-opacity-0 pointer-events-none' : 'bg-opacity-100'
-      }`}
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{
+        opacity: isExiting ? 0 : 1,
+        scale: isExiting ? 1.05 : 1,
+        filter: isExiting ? 'blur(8px)' : 'blur(0px)',
+      }}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white select-none overflow-hidden"
     >
       {/* Soft Ambient Radial Background Glow */}
-      <div 
-        className={`absolute inset-0 pointer-events-none transition-all duration-1000 ${
-          isLogoVisible ? 'opacity-100 scale-110' : 'opacity-0 scale-90'
-        }`}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{
+          opacity: isWordmarkRevealed ? 0.9 : 0.3,
+          scale: isWordmarkRevealed ? 1.1 : 0.9,
+        }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 45%, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.08) 40%, transparent 70%)',
+          background:
+            'radial-gradient(circle at 50% 50%, rgba(242, 92, 5, 0.08) 0%, rgba(43, 58, 151, 0.08) 40%, rgba(255, 255, 255, 0) 70%)',
         }}
       />
 
-      {/* Center Intro Branding Box with Camera Zoom-Through Effect */}
-      <div 
-        className={`relative z-10 flex flex-col items-center text-center px-6 max-w-xl transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${zoomClass}`}
-      >
-        {/* Clyptus Icon & Logo Header with Pulsing Glow */}
-        <div className="flex items-center gap-4 group">
-          <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500 via-sky-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-[0_10px_30px_rgba(2,132,199,0.35)] transition-transform duration-700 hover:scale-110">
-            <Zap className="w-8 h-8 fill-current animate-pulse" />
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-slate-900 drop-shadow-sm">
-            CLYPTUS<span className="text-sky-600 inline-block animate-pulse">.</span>
-          </h1>
-        </div>
-
-        {/* Tagline Reveal */}
-        <p
-          className={`mt-5 text-sm sm:text-base font-bold tracking-widest text-slate-600 transition-all duration-1000 ease-out ${
-            isTaglineVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-          }`}
+      {/* Cinematic Energy Stroke Layer (Orange + Blue Curve Sweeping Across Logo) */}
+      <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 1200 800"
+          fill="none"
+          preserveAspectRatio="xMidYMid slice"
         >
-          Technology<span className="text-sky-600 font-extrabold mx-2.5">•</span>Talent<span className="text-sky-600 font-extrabold mx-2.5">•</span>Transformation
-        </p>
+          <defs>
+            {/* Orange to Blue Energy Gradient */}
+            <linearGradient id="energyGradOrangeBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f25c05" />
+              <stop offset="50%" stopColor="#ea580c" />
+              <stop offset="85%" stopColor="#2b3a97" />
+              <stop offset="100%" stopColor="#0284c7" />
+            </linearGradient>
+
+            {/* Subtle Soft Motion Glow Filter */}
+            <filter id="energyGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="7" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Curved Energy Beam Sweeping Across the Centered Logo */}
+          {!reducedMotion && isEnergySweeping && (
+            <motion.path
+              d="M -150,500 C 250,200 450,600 600,400 C 750,200 950,550 1350,300"
+              stroke="url(#energyGradOrangeBlue)"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              filter="url(#energyGlow)"
+              initial={{ pathLength: 0, pathOffset: 0, opacity: 0 }}
+              animate={{
+                pathLength: [0, 0.45, 0.45, 0],
+                pathOffset: [0, 0.1, 0.55, 1],
+                opacity: [0, 0.95, 0.95, 0],
+              }}
+              transition={{
+                duration: 2.2,
+                ease: [0.22, 1, 0.36, 1],
+                times: [0, 0.3, 0.7, 1],
+              }}
+            />
+          )}
+        </svg>
       </div>
 
-      {/* Skip Button on Bottom Right */}
+      {/* Main Centered REAL Clyptus Logo Image */}
+      <div className="relative z-20 flex flex-col items-center justify-center p-6 max-w-2xl w-full">
+        <motion.img
+          initial={{ opacity: 0, scale: 0.92, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+          src={logoImg}
+          alt="Clyptus Software Solutions"
+          className="w-72 md:w-96 h-auto object-contain select-none pointer-events-none"
+        />
+
+        {/* Minimal Corporate Progress Line */}
+        <div className="mt-8 w-44 h-1 rounded-full bg-slate-100 overflow-hidden">
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: '0%' }}
+            transition={{ duration: 4.8, ease: 'linear' }}
+            className="h-full w-full bg-gradient-to-r from-orange-500 to-blue-700"
+          />
+        </div>
+      </div>
+
+      {/* Skip Button */}
       <button
         onClick={() => {
           setPhase('done');
           onSkip();
         }}
-        className="absolute bottom-8 right-8 z-20 text-xs font-mono text-slate-600 hover:text-sky-600 hover:border-sky-400 transition-all uppercase tracking-widest px-4 py-2 rounded-full bg-white/90 border border-slate-200 backdrop-blur-md shadow-md"
+        className="absolute bottom-8 right-8 z-30 text-xs font-mono text-slate-500 hover:text-orange-600 hover:border-orange-400 transition-all uppercase tracking-widest px-4 py-2 rounded-full bg-white/90 border border-slate-200 backdrop-blur-md shadow-sm"
       >
         Skip Intro →
       </button>
-    </div>
+    </motion.div>
   );
 };

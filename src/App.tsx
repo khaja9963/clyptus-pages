@@ -11,6 +11,9 @@ import { AiImpactSection } from './components/AiImpactSection';
 import { MetricsCounterSection } from './components/MetricsCounterSection';
 import { ContactSection } from './components/ContactSection';
 import { RisingSlideCardsSection } from './components/RisingSlideCardsSection';
+import { SapServicesSection } from './components/SapServicesSection';
+import { AiServicesSection } from './components/AiServicesSection';
+import { FloatingServicesPopup } from './components/FloatingServicesPopup';
 
 export function App() {
   const [showIntro, setShowIntro] = useState<boolean>(true);
@@ -58,6 +61,26 @@ export function App() {
         /* SEPARATE DEDICATED CONTACT US PAGE */
         <main className="w-full flex-1 flex flex-col items-center">
           <ContactSection />
+        </main>
+      ) : currentPage === 'SAP' || currentPage === 'Services' ? (
+        /* DEDICATED SAP SERVICES PAGE */
+        <main className="w-full flex-1 flex flex-col items-center">
+          <SapServicesSection
+            onContactClick={() => {
+              setCurrentPage('Contact');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        </main>
+      ) : currentPage === 'AI' || currentPage === 'ai-services' || currentPage === '/ai-services' ? (
+        /* DEDICATED AI & DATA ANALYTICS SERVICES PAGE */
+        <main className="w-full flex-1 flex flex-col items-center">
+          <AiServicesSection
+            onContactClick={() => {
+              setCurrentPage('Contact');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </main>
       ) : (
         /* MAIN HOME PAGE & 3D SPIRAL STAGE */
@@ -144,6 +167,16 @@ export function App() {
           card={codeModalCard}
           config={config}
           onClose={() => setCodeModalCard(null)}
+        />
+      )}
+
+      {/* Floating Services Launcher (Homepage Only) */}
+      {currentPage === 'Home' && (
+        <FloatingServicesPopup
+          onSelectService={(serviceId) => {
+            setCurrentPage(serviceId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
         />
       )}
     </div>
