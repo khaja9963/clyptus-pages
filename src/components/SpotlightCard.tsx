@@ -6,6 +6,7 @@ interface SpotlightCardProps {
   accentColor?: string; // hex or rgb color for laser trace & spotlight
   delay?: number;
   className?: string;
+  variants?: any;
 }
 
 export const SpotlightCard: React.FC<SpotlightCardProps> = ({
@@ -13,51 +14,39 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   accentColor = '#2563EB',
   delay = 0,
   className = '',
+  variants,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState({ rotateX: 0, rotateY: 0 });
-  const [spotlightPos, setSpotlightPos] = useState({ x: 0, y: 0, opacity: 0 });
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mediaQuery.matches);
-  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (reducedMotion || !cardRef.current) return;
-
-    const rect = cardRef.current.getBoundingClientRect();
+    const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    // Calculate 3D tilt offset (-0.04deg multiplier)
-    const rotateX = (y - centerY) * -0.04;
-    const rotateY = (x - centerX) * 0.04;
-
-    setTransform({ rotateX, rotateY });
-    setSpotlightPos({ x, y, opacity: 1 });
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
   };
 
-  const handleMouseLeave = () => {
-    setTransform({ rotateX: 0, rotateY: 0 });
-    setSpotlightPos((prev) => ({ ...prev, opacity: 0 }));
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.setProperty('--mouse-x', '-500px');
+    e.currentTarget.style.setProperty('--mouse-y', '-500px');
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{
-        duration: 0.65,
-        delay,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      style={{ perspective: 1000 }}
+      variants={variants}
+      initial={variants ? undefined : { opacity: 0, y: 35, scale: 0.97 }}
+      whileInView={variants ? undefined : { opacity: 1, y: 0, scale: 1 }}
+      viewport={variants ? undefined : { once: true, amount: 0.2 }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      transition={
+        variants
+          ? undefined
+          : {
+              duration: 0.5,
+              delay,
+              ease: [0.16, 1, 0.3, 1],
+            }
+      }
       className="w-full h-full"
     >
       <div
@@ -65,24 +54,12 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
-          transform: reducedMotion
-            ? 'none'
-            : `rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg)`,
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.18s ease-out, box-shadow 0.3s ease',
+          backgroundImage:
+            'radial-gradient(350px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(37, 99, 235, 0.07), transparent 80%)',
         }}
-        className={`group relative rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden ${className}`}
+        className={`group relative rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-[0_16px_24px_-4px_rgba(15,23,42,0.08)] hover:border-blue-500/40 transition-all duration-300 overflow-hidden ${className}`}
       >
-        {/* Dynamic Cursor Spotlight Radial Gradient */}
-        <div
-          className="pointer-events-none absolute inset-0 transition-opacity duration-300 z-0"
-          style={{
-            opacity: spotlightPos.opacity,
-            background: `radial-gradient(400px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(37,99,235,0.08), transparent 70%)`,
-          }}
-        />
-
-        {/* SVG Laser Border-Tracing Outline on Scroll Entrance */}
+        {/* SVG Subtle Border Accent Trace */}
         <svg
           className="pointer-events-none absolute inset-0 w-full h-full z-10 overflow-visible"
           xmlns="http://www.w3.org/2000/svg"
@@ -95,12 +72,8 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
             rx="24"
             fill="none"
             stroke={accentColor}
-            strokeWidth="2"
-            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{
-              strokeDasharray: 800,
-              strokeDashoffset: 0,
-            }}
+            strokeWidth="1.5"
+            className="opacity-0 group-hover:opacity-40 transition-opacity duration-300"
           />
         </svg>
 

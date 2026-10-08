@@ -3,7 +3,6 @@ import { SLIDER_CARDS, DEFAULT_SPIRAL_CONFIG } from './data/sliderData';
 import type { SliderCard, SpiralConfig } from './data/sliderData';
 import { Header } from './components/Header';
 import { SpiralSlider } from './components/SpiralSlider';
-import { StudioCustomizer } from './components/StudioCustomizer';
 import { CodePromptModal } from './components/CodePromptModal';
 import { CardDetailModal } from './components/CardDetailModal';
 import { CinematicIntro } from './components/CinematicIntro';
@@ -14,6 +13,7 @@ import { RisingSlideCardsSection } from './components/RisingSlideCardsSection';
 import { SapServicesSection } from './components/SapServicesSection';
 import { AiServicesSection } from './components/AiServicesSection';
 import { FloatingServicesPopup } from './components/FloatingServicesPopup';
+import { SapProjectsLedger } from './components/SapProjectsLedger';
 
 export function App() {
   const [showIntro, setShowIntro] = useState<boolean>(true);
@@ -62,7 +62,12 @@ export function App() {
         <main className="w-full flex-1 flex flex-col items-center">
           <ContactSection />
         </main>
-      ) : currentPage === 'SAP' || currentPage === 'Services' ? (
+      ) : currentPage === 'Projects' ? (
+        /* SEPARATE DEDICATED PROJECTS PAGE */
+        <main className="w-full flex-1 flex flex-col items-center">
+          <SapProjectsLedger />
+        </main>
+      ) : currentPage === 'SAP' || currentPage === 'Services' || currentPage === 'Solutions' ? (
         /* DEDICATED SAP SERVICES PAGE */
         <main className="w-full flex-1 flex flex-col items-center">
           <SapServicesSection
@@ -129,25 +134,6 @@ export function App() {
           <RisingSlideCardsSection />
         </main>
       )}
-
-      {/* Footer */}
-      <footer className="w-full border-t border-slate-200 bg-white py-8 px-4 text-center text-xs text-slate-500 flex flex-col items-center gap-2 shadow-inner">
-        <div className="flex items-center gap-2 font-mono text-slate-600">
-          <span className="font-bold text-slate-900">Clyptus</span> • 3D Spiral Slider Studio
-        </div>
-        <p>Built with React, CSS 3D Perspective, and WebGL depth sorting mechanics.</p>
-      </footer>
-
-      {/* Floating Studio Parameter Drawer */}
-      <StudioCustomizer
-        config={config}
-        onChangeConfig={setConfig}
-        onReset={() => setConfig(DEFAULT_SPIRAL_CONFIG)}
-        isOpen={isCustomizerOpen}
-        onToggleOpen={() => setIsCustomizerOpen(!isCustomizerOpen)}
-        cards={cards}
-        onUpdateCards={setCards}
-      />
 
       {/* Card Detail Modal */}
       {selectedCard && (

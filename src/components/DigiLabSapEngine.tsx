@@ -456,20 +456,11 @@ export const DigiLabSapEngine: React.FC<DigiLabSapEngineProps> = ({ onContactCli
               scrollStage === 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
             }`}
           >
-            {/* SAP Silver Partner Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm text-xs font-mono font-bold text-slate-800 mb-4">
-              <span className="p-1 rounded-md bg-amber-50 text-amber-600 border border-amber-200">
-                <Sparkles className="w-3.5 h-3.5" />
-              </span>
-              <span>SAP SILVER PARTNER</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse" />
-            </div>
-
-            {/* Exact Hero Headline */}
+            {/* Hero Headline */}
             <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-4">
-              Plan, move and run SAP S/4HANA — with an{' '}
+              Plan, move and run SAP S/4HANA — with{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-sky-600 to-indigo-600">
-                SAP Silver Partner.
+                Clyptus.
               </span>
             </h1>
 
@@ -533,17 +524,10 @@ export const DigiLabSapEngine: React.FC<DigiLabSapEngineProps> = ({ onContactCli
               scrollProgress >= 0.45 ? 'pointer-events-auto' : 'pointer-events-none'
             }`}
           >
-            {/* Center Technical Telemetry Readout Box (Compact Clean Hub) */}
-            <div className="absolute top-[52%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 p-3 rounded-2xl bg-white/95 border-2 border-sky-400 text-center shadow-xl backdrop-blur-xl w-52 pointer-events-auto">
-              <div className="flex items-center justify-between text-[9px] font-mono text-sky-700 mb-1 border-b border-slate-100 pb-1">
-                <span className="font-extrabold">SYS: SAP S/4HANA</span>
-                <Activity className="w-3.5 h-3.5 animate-pulse text-emerald-600" />
-              </div>
-              <span className="text-[11px] font-mono font-bold text-slate-800 block mb-1">
-                LAT: 17.3850° N | LON: 78.4867° E
-              </span>
-              <span className="text-[9px] font-mono font-extrabold text-emerald-700 px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 inline-block">
-                STATUS: OPTIMIZED [60 FPS]
+            {/* Center Technical Hub (Clean SAP S/4HANA Badge) */}
+            <div className="absolute top-[52%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 px-5 py-2.5 rounded-2xl bg-white/95 border-2 border-sky-500 text-center shadow-xl backdrop-blur-xl pointer-events-auto flex items-center justify-center gap-2 whitespace-nowrap">
+              <span className="text-xs font-mono font-black text-slate-900 tracking-wider">
+                SAP S/4HANA
               </span>
             </div>
 
@@ -637,15 +621,10 @@ export const DigiLabSapEngine: React.FC<DigiLabSapEngineProps> = ({ onContactCli
       ) : (
         /* MOBILE FALLBACK (< 768px): Clean Hero + Vertical Timeline */
         <div className="py-20 px-4 flex flex-col items-center text-center gap-6 bg-slate-50">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-200 text-xs font-mono font-bold text-slate-800">
-            <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-            <span>SAP SILVER PARTNER</span>
-          </div>
-
           <h1 className="text-3xl font-black text-slate-900 leading-tight">
-            Plan, move and run SAP S/4HANA — with an{' '}
+            Plan, move and run SAP S/4HANA — with{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-sky-600">
-              SAP Silver Partner.
+              Clyptus.
             </span>
           </h1>
 

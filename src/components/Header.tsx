@@ -17,9 +17,9 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const navLinks = [
     'Home',
+    'SAP',
     'Projects',
     'Industries',
-    'Solutions',
     'Blogs',
     'Contact',
   ];
@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                 }`}
               >
-                {link}
+                {link === 'SAP' ? 'SAP & ERP' : link}
                 {isActive && (
                   <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-3 h-0.5 rounded-full bg-sky-600" />
                 )}
