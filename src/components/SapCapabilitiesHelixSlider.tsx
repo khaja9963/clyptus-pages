@@ -15,6 +15,8 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
+import { CapabilityDetailView } from './CapabilityDetailView';
+
 export interface SapCapability {
   num: string;
   title: string;
@@ -107,6 +109,7 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
   onContactClick,
 }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [selectedCapabilityNum, setSelectedCapabilityNum] = useState<string | null>(null);
   const totalCards = CAPABILITIES_DATA.length;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -270,10 +273,21 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
 
                 {/* Bottom Action Line */}
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                  <span className="text-xs font-extrabold text-blue-600 flex items-center gap-1 group">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isCenter) {
+                        setSelectedCapabilityNum(item.num);
+                      } else {
+                        setActiveIndex(idx);
+                      }
+                    }}
+                    className="text-xs font-extrabold text-blue-600 flex items-center gap-1 group hover:text-blue-700 transition-colors"
+                  >
                     <span>Explore Capability</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </span>
+                  </button>
                   {isCenter && (
                     <span className="w-2 h-2 rounded-full bg-orange-500 animate-ping" />
                   )}
@@ -323,10 +337,17 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
                   {item.desc}
                 </p>
 
-                <div className="flex items-center text-xs font-bold text-blue-600 gap-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCapabilityNum(item.num);
+                  }}
+                  className="flex items-center text-xs font-bold text-blue-600 gap-1 hover:text-blue-700 transition-colors"
+                >
                   <span>Explore Capability</span>
                   <ArrowRight className="w-3.5 h-3.5" />
-                </div>
+                </button>
               </div>
             );
           })}
@@ -346,6 +367,14 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
           ))}
         </div>
       </div>
+
+      {/* Capability Verbatim Detail Reader Modal */}
+      <CapabilityDetailView
+        capabilityNum={selectedCapabilityNum}
+        onClose={() => setSelectedCapabilityNum(null)}
+        onContactClick={onContactClick}
+      />
     </div>
   );
 };
+
