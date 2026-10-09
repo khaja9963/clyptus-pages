@@ -421,7 +421,7 @@ export const SapServicesSection: React.FC<SapServicesSectionProps> = ({ onContac
   ];
 
   return (
-    <div className="w-full bg-slate-50 text-slate-900 select-none overflow-hidden font-sans">
+    <div className="w-full bg-slate-50 text-slate-900 select-none overflow-x-clip font-sans">
       
       {/* ================= 3-STAGE SCROLLED DIGILAB ENGINE ================= */}
       <DigiLabSapEngine onContactClick={onContactClick} />
@@ -467,22 +467,15 @@ export const SapServicesSection: React.FC<SapServicesSectionProps> = ({ onContac
         </div>
       </section>
 
-      {/* ================= 2. WHAT WE DO (9 CORE SERVICES) ================= */}
-      <section className="py-24 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto">
-        <div className="text-center flex flex-col items-center gap-3 mb-16">
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
-            Core ERP &{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500">
-              SAP Capabilities
-            </span>
-          </h2>
-        </div>
-
-        {/* Interactive 3D Helix / Spiral Capabilities Slider */}
+      {/* ================= 2. WHAT WE DO (9 CORE SERVICES & MARQUEE) ================= */}
+      <section className="w-full">
+        {/* Interactive 3D Helix / Spiral Capabilities Sticky Scroll Slider */}
         <SapCapabilitiesHelixSlider onContactClick={onContactClick} />
 
         {/* Capabilities Across Every Platform Infinite Marquee Banner */}
-        <CapabilitiesMarqueeBanner />
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 pt-6 pb-16">
+          <CapabilitiesMarqueeBanner />
+        </div>
       </section>
 
       {/* ================= 3. HOW AN ERP PROGRAMME RUNS (CONNECTED STEPPER PIPELINE) ================= */}

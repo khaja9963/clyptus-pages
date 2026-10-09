@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, ShieldCheck, ArrowRight, Layers } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export interface SapProjectItem {
   id: string;
@@ -120,10 +120,6 @@ export const SapProjectsLedger: React.FC = () => {
     >
       {/* Section Header */}
       <div className="text-center flex flex-col items-center gap-3 mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-mono text-slate-700 font-bold uppercase shadow-sm">
-          <Layers className="w-3.5 h-3.5 text-blue-600" />
-          ENTERPRISE DELIVERIES
-        </div>
         <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
           SAP{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500">

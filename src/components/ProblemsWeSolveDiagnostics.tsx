@@ -6,7 +6,6 @@ import {
   BarChart,
   Zap,
   Clock,
-  ArrowRight,
 } from 'lucide-react';
 
 export interface DiagnosticProblem {
@@ -103,11 +102,6 @@ export const ProblemsWeSolveDiagnostics: React.FC = () => {
                       {prob.desc}
                     </p>
                   </div>
-                </div>
-
-                {/* Right Arrow Hover Action */}
-                <div className="shrink-0 text-slate-300 group-hover:text-orange-500 group-hover:translate-x-1 transition-all">
-                  <ArrowRight className="w-5 h-5" />
                 </div>
               </motion.div>
             );

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import {
   Layers,
   Cloud,
@@ -113,13 +113,19 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
   const totalCards = CAPABILITIES_DATA.length;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Automatic Fast Orbit Interval (cycles every 2 seconds)
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % totalCards);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, [totalCards]);
+  // Scroll-driven progress to cycle through 9 cards while screen is pinned
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    const calculatedIndex = Math.min(
+      totalCards - 1,
+      Math.floor(latest * totalCards)
+    );
+    setActiveIndex(calculatedIndex);
+  });
 
   const handleNext = () => {
     setActiveIndex((prev) => (prev + 1) % totalCards);
@@ -135,16 +141,24 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
     <div
       ref={containerRef}
       id="core-capabilities"
-      className="w-full relative py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto select-none"
+      className="relative w-full h-[350vh]"
     >
+      {/* Sticky screen container */}
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-center px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto select-none overflow-hidden">
+        {/* Section Heading */}
+        <div className="text-center flex flex-col items-center gap-2 mb-3">
+          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+            Core ERP &{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500">
+              SAP Capabilities
+            </span>
+          </h2>
+        </div>
       {/* Top Header Telemetry & Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+      <div className="flex items-center justify-between gap-4 mb-3">
         <div className="flex items-center gap-3">
           <span className="px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-mono text-xs font-extrabold shadow-sm">
             [ {String(activeIndex + 1).padStart(2, '0')} / {String(totalCards).padStart(2, '0')} ]
-          </span>
-          <span className="text-xs font-mono text-slate-500 font-bold uppercase tracking-wider hidden sm:inline-block">
-            Interactive 3D Capabilities Helix
           </span>
         </div>
 
@@ -374,6 +388,7 @@ export const SapCapabilitiesHelixSlider: React.FC<SapCapabilitiesHelixSliderProp
         onClose={() => setSelectedCapabilityNum(null)}
         onContactClick={onContactClick}
       />
+      </div>
     </div>
   );
 };
