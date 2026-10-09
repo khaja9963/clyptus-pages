@@ -474,36 +474,61 @@ export const CapabilityDetailView: React.FC<CapabilityDetailViewProps> = ({
             {capabilityNum === '03' && (
               <div className="space-y-10">
                 <div className="border-b-2 border-slate-900 pb-6">
-                  <span className="text-xs font-mono font-extrabold text-purple-600 uppercase tracking-wider block mb-2">
-                    #btp
-                  </span>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="px-3 py-1 rounded bg-amber-50 border border-amber-200 text-amber-800 font-mono text-xs font-black uppercase">
+                      INTERIM PANEL
+                    </span>
+                    <span className="text-xs font-mono text-slate-400">
+                      #btp
+                    </span>
+                  </div>
                   <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight mb-4">
-                    SAP BTP and Add-on Solutions
+                    SAP BTP and add-on solutions
                   </h1>
                   <p className="text-slate-700 text-base sm:text-lg font-medium leading-relaxed max-w-3xl">
                     SAP Business Technology Platform (BTP) is SAP&apos;s platform for building extensions and integrations around the core SAP system. Clyptus runs a BTP practice and builds custom SAP add-on solutions.
                   </p>
                 </div>
 
+                {/* What We Do */}
                 <div className="space-y-6">
-                  <h3 className="text-lg font-black text-slate-900 uppercase font-mono tracking-wider border-b border-slate-200 pb-2">
-                    What We Do
-                  </h3>
+                  <div className="border-b border-slate-200 pb-2">
+                    <h3 className="text-lg font-black text-slate-900 uppercase font-mono tracking-wider">
+                      What We Do
+                    </h3>
+                  </div>
                   <div className="divide-y divide-slate-200 border-y border-slate-200">
                     <div className="py-4 flex items-start gap-4">
-                      <span className="w-2 h-2 rounded-full bg-purple-600 shrink-0 mt-2" />
+                      <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-extrabold text-slate-900 text-base">BTP Extensions</h4>
-                        <p className="text-sm text-slate-600 font-medium mt-0.5">Extensions built on BTP, alongside the core SAP system.</p>
+                        <h4 className="font-extrabold text-slate-900 text-base">Extensions built on BTP, alongside the core SAP system</h4>
                       </div>
                     </div>
                     <div className="py-4 flex items-start gap-4">
-                      <span className="w-2 h-2 rounded-full bg-purple-600 shrink-0 mt-2" />
+                      <CheckCircle2 className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-extrabold text-slate-900 text-base">Custom Add-ons</h4>
-                        <p className="text-sm text-slate-600 font-medium mt-0.5">Custom SAP add-on solutions engineered for enterprise workflows.</p>
+                        <h4 className="font-extrabold text-slate-900 text-base">Custom SAP add-on solutions</h4>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* Rules & Still to confirm with management */}
+                <div className="pt-6 border-t border-slate-200 text-xs text-slate-600 space-y-4">
+                  <div className="space-y-1">
+                    <span className="font-extrabold font-mono text-[10px] text-slate-400 block uppercase">Rules for this panel</span>
+                    <ul className="list-disc list-inside space-y-1 font-medium text-slate-500">
+                      <li>Show only the lines above. Do not name any BTP service or add-on product.</li>
+                      <li>Do not copy text from other websites or from SAP&apos;s own pages.</li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="font-extrabold font-mono text-[10px] text-amber-600 block uppercase">Still to confirm with management</span>
+                    <ul className="list-disc list-inside space-y-1 font-medium text-amber-800">
+                      <li>Which add-on solutions have we built? Name each and say what it does.</li>
+                      <li>Which BTP services do we use, and is there a client example?</li>
+                    </ul>
                   </div>
                 </div>
               </div>
